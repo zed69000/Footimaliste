@@ -2,77 +2,82 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Bounce FC - Edition Lisible</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Bounce FC - Edition Mobile Pro</title>
   <style>
     :root {
-      --bg: #0f1518;
-      --panel: rgba(8, 13, 16, 0.78);
-      --line: rgba(255,255,255,.16);
-      --text: #f2fff8;
-      --muted: rgba(242,255,248,.72);
-      --accent: #ffe66b;
-    } 
+      --bg: #0f1518; --panel: rgba(8, 13, 16, 0.78); --line: rgba(255,255,255,.16);
+      --text: #f2fff8; --muted: rgba(242,255,248,.72); --accent: #ffe66b;
+    }
 
     html, body {
-      margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
+      margin: 0; padding: 0; width: 100%;
+      height: 100dvh; /* 100dvh = Dynamic Viewport Height (règle le bug Safari) */
+      overflow: hidden;
       background: radial-gradient(circle at 50% 35%, #1b3030 0%, var(--bg) 64%, #070a0c 100%);
-      color: var(--text); font-family: Arial, Helvetica, sans-serif;
-      touch-action: none; user-select: none;
+      color: var(--text); font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
     }
+
+    /* On ne bloque le touch que sur la zone de jeu pour que le menu marche */
+    #wrap, #mobileControls { touch-action: none; }
 
     #wrap { position: fixed; inset: 0; display: grid; place-items: center; }
 
     canvas {
-      width: min(100vw, calc(100vh * 16 / 9)); height: min(100vh, calc(100vw * 9 / 16));
+      width: min(100vw, calc(100dvh * 16 / 9)); height: min(100dvh, calc(100vw * 9 / 16));
       image-rendering: pixelated; image-rendering: crisp-edges;
       background: #147342; box-shadow: 0 24px 80px rgba(0,0,0,.45);
     }
 
     #topUi {
-      position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
+      position: fixed; top: env(safe-area-inset-top, 10px); left: 50%; transform: translateX(-50%);
       display: flex; gap: 12px; align-items: center; justify-content: center;
       padding: 8px 14px; border: 1px solid var(--line); background: var(--panel);
       backdrop-filter: blur(8px); border-radius: 14px; font-weight: 800;
       letter-spacing: .4px; pointer-events: none; text-shadow: 0 2px 0 rgba(0,0,0,.35); z-index: 5;
+      margin-top: 10px;
     }
 
     #toast {
-      position: fixed; top: 62px; left: 50%; transform: translateX(-50%);
+      position: fixed; top: calc(env(safe-area-inset-top, 10px) + 62px); left: 50%; transform: translateX(-50%);
       padding: 8px 14px; border-radius: 999px; background: rgba(0,0,0,.5);
       border: 1px solid rgba(255,255,255,.12); font-weight: 700; opacity: 0;
-      transition: opacity .18s ease; pointer-events: none; z-index: 6; font-size: 24px;
-      color: #ffe66b;
+      transition: opacity .18s ease; pointer-events: none; z-index: 6; font-size: 24px; color: #ffe66b;
     }
 
     #menu {
       position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
       background: radial-gradient(circle at 50% 40%, rgba(23, 83, 56, .92), rgba(5,7,9,.96)); z-index: 10;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
 
     .panel {
-      width: min(860px, calc(100vw - 32px)); border: 1px solid rgba(255,255,255,.18);
-      background: rgba(8, 12, 14, .82); border-radius: 24px;
-      box-shadow: 0 24px 90px rgba(0,0,0,.5); padding: 24px;
+      width: min(860px, calc(100vw - 32px)); max-height: 90dvh; overflow-y: auto;
+      border: 1px solid rgba(255,255,255,.18); background: rgba(8, 12, 14, .82);
+      border-radius: 24px; box-shadow: 0 24px 90px rgba(0,0,0,.5); padding: 24px; box-sizing: border-box;
     }
 
-    h1 { margin: 0 0 4px 0; font-size: clamp(36px, 7vw, 72px); line-height: .95; letter-spacing: -2px; }
-    .sub { color: var(--muted); margin-bottom: 22px; }
-    .countries { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    h1 { margin: 0 0 4px 0; font-size: clamp(32px, 7vw, 72px); line-height: .95; letter-spacing: -2px; }
+    .sub { color: var(--muted); margin-bottom: 22px; font-size: 14px; line-height: 1.4; }
+
+    .countries { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
 
     .country {
-      border: 1px solid rgba(255,255,255,.14); border-radius: 16px; padding: 14px;
+      border: 1px solid rgba(255,255,255,.14); border-radius: 16px; padding: 12px;
       background: rgba(255,255,255,.06); cursor: pointer;
       transition: transform .12s ease, background .12s ease, border-color .12s ease;
     }
-    .country:hover, .country.selected { transform: translateY(-2px); background: rgba(255,255,255,.11); border-color: rgba(255,230,107,.75); }
+    .country:active, .country.selected { transform: translateY(-2px); background: rgba(255,255,255,.11); border-color: rgba(255,230,107,.75); }
 
-    .kit { width: 42px; height: 42px; border-radius: 9px; border: 2px solid rgba(0,0,0,.35); margin-bottom: 10px; box-shadow: inset 0 0 0 4px rgba(255,255,255,.1); }
-    .country strong { display: block; font-size: 18px; margin-bottom: 6px; }
-    .stats { color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .kit { width: 36px; height: 36px; border-radius: 9px; border: 2px solid rgba(0,0,0,.35); margin-bottom: 8px; box-shadow: inset 0 0 0 4px rgba(255,255,255,.1); }
+    .country strong { display: block; font-size: 16px; margin-bottom: 4px; }
+    .stats { color: var(--muted); font-size: 11px; line-height: 1.35; }
 
     #startBtn {
-      margin-top: 18px; width: 100%; height: 54px; border: 0; border-radius: 16px;
+      margin-top: 18px; width: 100%; height: 60px; border: 0; border-radius: 16px;
       font-size: 18px; font-weight: 900; color: #141414;
       background: linear-gradient(180deg, #fff18b, #ffc83c); cursor: pointer; box-shadow: 0 8px 0 #8d6716;
     }
@@ -85,14 +90,38 @@
     }
 
     #mobileControls { position: fixed; inset: 0; pointer-events: none; display: none; z-index: 7; }
-    .stickBase { position: absolute; left: 22px; bottom: 28px; width: 122px; height: 122px; border-radius: 50%; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); pointer-events: auto; }
-    .stickNub { position: absolute; left: 39px; top: 39px; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,.42); }
-    .btns { position: absolute; right: 18px; bottom: 26px; display: grid; grid-template-columns: repeat(3, 60px); gap: 10px; pointer-events: auto; }
-    .mbtn { width: 60px; height: 60px; border-radius: 50%; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.14); color: white; font-weight: 900; display: grid; place-items: center; font-size: 11px; backdrop-filter: blur(5px); }
 
-    @media (max-width: 820px) {
-      .countries { grid-template-columns: repeat(2, 1fr); }
-      #help { display: none; } #mobileControls { display: block; } #topUi { font-size: 12px; }
+    /* Ergonomie Mobile : Safe Area + Taille augmentée */
+    .stickBase {
+      position: absolute;
+      left: max(30px, env(safe-area-inset-left));
+      bottom: max(40px, env(safe-area-inset-bottom, 20px)); /* S'éloigne de la barre Home iOS */
+      width: 150px; height: 150px; border-radius: 50%;
+      background: rgba(255,255,255,.12); border: 2px solid rgba(255,255,255,.25);
+      pointer-events: auto; backdrop-filter: blur(4px);
+    }
+    .stickNub { position: absolute; left: 45px; top: 45px; width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,.6); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+    .btns {
+      position: absolute;
+      right: max(20px, env(safe-area-inset-right));
+      bottom: max(40px, env(safe-area-inset-bottom, 20px));
+      display: grid; grid-template-columns: repeat(3, 76px); gap: 12px; pointer-events: auto;
+    }
+    .mbtn {
+      width: 76px; height: 76px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.25); background: rgba(255,255,255,.18);
+      color: white; font-weight: 900; display: grid; place-items: center;
+      font-size: 11px; backdrop-filter: blur(5px); transition: background 0.1s, transform 0.1s;
+      user-select: none;
+    }
+    .mbtn:active { background: rgba(255,255,255,.4); transform: scale(0.92); }
+
+    @media (max-width: 820px), (hover: none) and (pointer: coarse) {
+      #help { display: none; }
+      #mobileControls { display: block; }
+      #topUi { font-size: 11px; gap: 8px; padding: 6px 10px;}
+      .panel { padding: 16px; }
     }
   </style>
 </head>
@@ -121,7 +150,7 @@
 <div id="menu">
   <div class="panel">
     <h1>Bounce FC</h1>
-    <div class="sub">Lisibilité maximum. Plus d'empilements de joueurs, fin des dérapages. Place au jeu.</div>
+    <div class="sub">Lisibilité maximum. Optimisé pour iPhone. Touche pour lancer la partie.</div>
     <div class="countries" id="countryList"></div>
     <button id="startBtn">LANCER LE MATCH</button>
   </div>
@@ -183,7 +212,7 @@
     const lastKeys = Object.create(null);
     const pressed = Object.create(null);
     let mobileMove = { x:0, y:0 };
-    let stickActive = false; // Expose pour vérifier si le tactile est utilisé
+    let stickActive = false;
     const mobileState = Object.create(null);
     const lastMobileState = Object.create(null);
 
@@ -209,36 +238,22 @@
 
     class Player {
       constructor(x,y,team,role,country,index){
-        this.pos = new Vec(x,y);
-        this.vel = new Vec();
-        this.team = team;
-        this.role = role;
-        this.country = country;
-        this.index = index;
-        this.size = role === 'keeper' ? 28 : 26;
-        this.radius = this.size * .58;
-        this.hasBall = false;
-        this.isControlled = false;
+        this.pos = new Vec(x,y); this.vel = new Vec();
+        this.team = team; this.role = role; this.country = country; this.index = index;
+        this.size = role === 'keeper' ? 28 : 26; this.radius = this.size * .58;
+        this.hasBall = false; this.isControlled = false;
 
-        // ENCORE PLUS LENT ET PLUS DE FRICTION
         this.baseSpeed = (role === 'keeper' ? 1.0 : 1.15) * country.speed;
-        this.accel = 0.22;
-        this.friction = 0.82; // Arrêt plus net
+        this.accel = 0.22; this.friction = 0.82;
 
-        this.tackleCooldown = 0;
-        this.stun = 0;
-        this.target = new Vec(x,y);
+        this.tackleCooldown = 0; this.stun = 0; this.target = new Vec(x,y);
         this.lastFace = team === TEAM_A ? new Vec(1,0) : new Vec(-1,0);
-
-        this.stamina = 100;
-        this.charge = 0;
-        this.chargeType = null;
+        this.stamina = 100; this.charge = 0; this.chargeType = null;
       }
 
       update(dt){
         if(this.tackleCooldown>0) this.tackleCooldown--;
         if(this.stun>0) this.stun--;
-
         if(this.stamina < 100) this.stamina += 0.4;
 
         if(this.stun <= 0 && kickoffWait <= 0){
@@ -256,7 +271,6 @@
         this.pos.add(this.vel);
         this.vel.mul(this.friction);
 
-        // Contraintes de terrain
         this.pos.x = clamp(this.pos.x, field.x + this.radius, field.x + field.w - this.radius);
         this.pos.y = clamp(this.pos.y, field.y + this.radius, field.y + field.h - this.radius);
       }
@@ -297,8 +311,7 @@
             const powerRatio = clamp(this.charge / 100, 0.3, 1.0);
             if (this.chargeType === 'pass') passBall(this, powerRatio);
             if (this.chargeType === 'shoot') shootBall(this, powerRatio);
-            this.charge = 0;
-            this.chargeType = null;
+            this.charge = 0; this.chargeType = null;
           }
         } else {
           this.charge = 0;
@@ -313,12 +326,8 @@
         const freeBall = !ball.owner;
 
         const mates = players.filter(p => p.team === this.team && p.role !== 'keeper');
-        let closest = mates[0];
-        let minDist = Infinity;
-        mates.forEach(m => {
-          const d = Vec.dist(m.pos, ball.pos);
-          if (d < minDist) { minDist = d; closest = m; }
-        });
+        let closest = mates[0]; let minDist = Infinity;
+        mates.forEach(m => { const d = Vec.dist(m.pos, ball.pos); if (d < minDist) { minDist = d; closest = m; } });
         const isClosest = (this === closest);
 
         if (freeBall && isClosest) {
@@ -375,22 +384,17 @@
         const centerBias = Math.abs(this.pos.y - H/2);
 
         if(distGoal < 245 && centerBias < 145 && this.charge > 40) {
-          shootBall(this, 0.8 + Math.random()*0.2);
-          this.charge = 0;
+          shootBall(this, 0.8 + Math.random()*0.2); this.charge = 0;
         } else if(Math.random() < 0.015 && this.charge > 30) {
-          passBall(this, 0.5 + Math.random()*0.5);
-          this.charge = 0;
+          passBall(this, 0.5 + Math.random()*0.5); this.charge = 0;
         }
       }
 
       draw(){
         const x=this.pos.x, y=this.pos.y, s=this.size, h=s/2;
         ctx.save();
-        ctx.fillStyle = 'rgba(0,0,0,.28)';
-        roundRect(ctx, x-h+3, y-h+9, s, s, 5); ctx.fill();
-
-        ctx.fillStyle = this.country.color;
-        roundRect(ctx, x-h, y-h, s, s, 5); ctx.fill();
+        ctx.fillStyle = 'rgba(0,0,0,.28)'; roundRect(ctx, x-h+3, y-h+9, s, s, 5); ctx.fill();
+        ctx.fillStyle = this.country.color; roundRect(ctx, x-h, y-h, s, s, 5); ctx.fill();
         ctx.lineWidth = this.isControlled ? 4 : 2;
         ctx.strokeStyle = this.isControlled ? '#fff6a5' : '#101010'; ctx.stroke();
 
@@ -419,19 +423,16 @@
         }
 
         if(this.isControlled) {
-          ctx.fillStyle = 'rgba(0,0,0,0.5)';
-          ctx.fillRect(x - 12, y + h + 4, 24, 4);
+          ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x - 12, y + h + 4, 24, 4);
           ctx.fillStyle = this.stamina < 30 ? '#ff4d4d' : '#2ecc71';
           ctx.fillRect(x - 12, y + h + 4, 24 * (this.stamina/100), 4);
         }
 
         if(this.charge > 0) {
-          ctx.fillStyle = 'rgba(0,0,0,0.5)';
-          ctx.fillRect(x - 15, y - h - 10, 30, 6);
+          ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x - 15, y - h - 10, 30, 6);
           ctx.fillStyle = this.chargeType === 'shoot' ? '#ff9f43' : '#48dbfb';
           ctx.fillRect(x - 15, y - h - 10, 30 * (this.charge/100), 6);
         }
-
         ctx.restore();
       }
     }
@@ -456,16 +457,14 @@
       }
       update(){
         if(kickoffWait > 0 && isKickoff) return;
-
         if(this.owner){
           const d = getPlayerFacing(this.owner);
           this.pos.x = this.owner.pos.x + d.x*20; this.pos.y = this.owner.pos.y + d.y*20;
           this.vel.set(0,0); return;
         }
-
         this.pos.add(this.vel);
         this.spin += this.vel.len()*.05;
-        this.vel.mul(.975); // Balle qui roule un peu moins loin 
+        this.vel.mul(.975);
         if(this.vel.len()<.035) this.vel.set(0,0);
 
         if(this.pos.x - this.radius < field.x){
@@ -506,14 +505,15 @@
       Object.entries(countries).forEach(([id,c])=>{
         const el = document.createElement('div');
         el.className = 'country' + (id===selectedCountryId ? ' selected' : '');
-        el.innerHTML = `<div class="kit" style="background:${c.color}; border-color:${c.stripe}; box-shadow: inset 15px 0 0 ${c.stripe};"></div><strong>${c.name}</strong><div class="stats">${c.style}<br>Vitesse ${stat(c.speed)} · Tir ${stat(c.power)}<br>Passe ${stat(c.pass)} · Tacle ${stat(c.tackle)}</div>`;
+        el.innerHTML = `<div class="kit" style="background:${c.color}; border-color:${c.stripe}; box-shadow: inset 15px 0 0 ${c.stripe};"></div><strong>${c.name}</strong><div class="stats">${c.style}<br>Vitesse ${stat(c.speed)} · Tir ${stat(c.power)}</div>`;
         el.onclick = () => { selectedCountryId = id; createMenu(); };
         countryList.appendChild(el);
       });
     }
     function stat(v){ return v>=1.15?'★★★':v>=1.03?'★★☆':v>=.96?'★☆☆':'·☆☆'; }
 
-    startBtn.onclick = () => {
+// Gestion du clic robuste pour mobile
+    startBtn.addEventListener('click', (e) => {
       teamAData = countries[selectedCountryId];
       const ids = Object.keys(countries).filter(id=>id!==selectedCountryId);
       teamBData = countries[ids[Math.floor(Math.random()*ids.length)]];
@@ -521,7 +521,7 @@
       if(audioCtx.state === 'suspended') audioCtx.resume();
       restart();
       triggerKickoff(TEAM_A);
-    };
+    });
 
     function createTeams(){
       players = [];
@@ -549,80 +549,55 @@
       const mates = players.filter(m => m.team === p.team && m !== p);
       const facing = getPlayerFacing(p);
       let best = null, bestScore = -99999;
-
       for(const m of mates){
-        const to = m.pos.clone().sub(p.pos);
-        const dist = to.len();
-        const dir = to.clone().norm();
+        const to = m.pos.clone().sub(p.pos); const dist = to.len(); const dir = to.clone().norm();
         const align = dir.x * facing.x + dir.y * facing.y;
-
         if (p.isControlled && align < 0.35) continue;
-
         let score = align * 150 - dist * 0.16;
-        if (p.team === TEAM_A) score += (m.pos.x - p.pos.x) * 0.05;
-        else score += (p.pos.x - m.pos.x) * 0.05;
-
+        if (p.team === TEAM_A) score += (m.pos.x - p.pos.x) * 0.05; else score += (p.pos.x - m.pos.x) * 0.05;
         if (isPassLaneBlocked(p.pos, m.pos, p.team)) score -= 115;
         if (m.role === 'striker') score += 12;
-
         if(score > bestScore){ bestScore = score; best = m; }
       }
-
       let releaseDir = facing.clone();
-
       if (best) {
         const toMate = best.pos.clone().sub(p.pos).norm();
         releaseDir = p.isControlled ? facing.mul(0.4).add(toMate.mul(0.6)).norm() : toMate;
         if (p.team === controlledTeam) setControlled(best);
       }
-
       releaseBall(releaseDir, (3.5 + 4 * powerRatio) * p.country.pass);
       pop(p.pos.x, p.pos.y, p.country.stripe, 10);
     }
 
     function shootBall(p, powerRatio){
       let dir = p.lastFace.clone().norm();
-
       if (p.isControlled) {
         const goalX = p.team === TEAM_A ? field.x + field.w : field.x;
         const toGoal = new Vec(goalX, H/2).sub(p.pos).norm();
         const dot = dir.x * toGoal.x + dir.y * toGoal.y;
-
-        if (dot > 0.5) {
-          dir = dir.mul(0.55).add(toGoal.mul(0.45)).norm();
-        }
+        if (dot > 0.5) dir = dir.mul(0.55).add(toGoal.mul(0.45)).norm();
       } else {
         const goalX = p.team === TEAM_A ? field.x + field.w : field.x;
         const aimY = H/2 + randomRange(-field.goalSize * 0.6, field.goalSize * 0.6);
         dir = new Vec(goalX, aimY).sub(p.pos).norm();
-
         const angleErr = randomRange(-0.15, 0.15);
         const ca = Math.cos(angleErr), sa = Math.sin(angleErr);
         dir.set(dir.x * ca - dir.y * sa, dir.x * sa + dir.y * ca);
       }
-
       releaseBall(dir, (4.5 + 5 * powerRatio) * p.country.power);
       pop(p.pos.x, p.pos.y, '#ffe66b', 14);
     }
 
     function tackle(p){
-      p.tackleCooldown = 60;
-      const dir = getPlayerFacing(p);
+      p.tackleCooldown = 60; const dir = getPlayerFacing(p);
       p.vel.add(dir.clone().mul(5.5 * p.country.tackle));
       pop(p.pos.x,p.pos.y,'#9be7ff',8);
-
       for(const o of players){
         if(o===p || o.team===p.team) continue;
         if(Vec.dist(p.pos,o.pos) < 42){
-          o.stun = 45;
-          o.vel.add(dir.clone().mul(4));
-          cameraShake = 12;
+          o.stun = 45; o.vel.add(dir.clone().mul(4)); cameraShake = 12;
           pop(o.pos.x,o.pos.y,'#ff4d4d',15);
-
-          if(o.hasBall){
-            o.hasBall=false; ball.owner=null;
-            ball.vel = dir.clone().mul(3 + Math.random()*2);
-          }
+          if(o.hasBall){ o.hasBall=false; ball.owner=null; ball.vel = dir.clone().mul(3 + Math.random()*2); }
         }
       }
     }
@@ -630,14 +605,9 @@
     function switchControlledPlayer(){
       const list = players.filter(p => p.team === controlledTeam && p.role !== 'keeper');
       if(list.length === 0) return;
-
       list.sort((a,b) => Vec.dist(a.pos, ball.pos) - Vec.dist(b.pos, ball.pos));
-
       let target = list[0];
-      if(target === controlledPlayer && list.length > 1) {
-        target = list[1];
-      }
-
+      if(target === controlledPlayer && list.length > 1) target = list[1];
       if(target) setControlled(target);
     }
 
@@ -659,35 +629,24 @@
       if(team===TEAM_A) scoreA++; else scoreB++;
       showToast(team===TEAM_A ? 'B U T ! WAAAAAH !' : 'B U T ! (Adversaire)');
       goalBurst(team===TEAM_A ? field.x+field.w : field.x, H/2);
-      cameraShake = 20;
-      playCrowdRoar();
-      launchConfetti();
+      cameraShake = 20; playCrowdRoar(); launchConfetti();
       triggerKickoff(team===TEAM_A ? TEAM_B : TEAM_A);
     }
 
     function triggerKickoff(kickoffTeam){
-      isKickoff = true;
-      kickoffWait = 3;
+      isKickoff = true; kickoffWait = 3;
       ball.pos = new Vec(W/2,H/2); ball.vel = new Vec(); ball.owner = null;
       const starter = players.find(p=>p.team===kickoffTeam && p.role==='mid') || players[3];
       setTimeout(() => { if(!gameOver) attachBall(starter); }, 3000);
     }
 
-    function restart(){
-      scoreA=0; scoreB=0; timer=90; gameOver=false;
-      ball = new Ball(); createTeams();
-    }
+    function restart(){ scoreA=0; scoreB=0; timer=90; gameOver=false; ball = new Ball(); createTeams(); }
 
     function pollGamepad() {
       const pads = navigator.getGamepads ? navigator.getGamepads() : [];
-      const pad = pads[0];
-      if (!pad) return;
-      const deadzone = 0.2;
-      const axesX = pad.axes[0];
-      const axesY = pad.axes[1];
+      const pad = pads[0]; if (!pad) return;
+      const deadzone = 0.2; const axesX = pad.axes[0]; const axesY = pad.axes[1];
 
-      // Correction du bug "Joystick fantôme" : 
-      // Si le joystick de la manette est utilisé (hors tactile), on force la mise à jour (même vers 0)
       if (!stickActive) {
         mobileMove.x = Math.abs(axesX) > deadzone ? axesX : 0;
         mobileMove.y = Math.abs(axesY) > deadzone ? axesY : 0;
@@ -708,41 +667,32 @@
       if(keys.r) restart();
 
       if(kickoffWait > 0) {
-        kickoffWait -= dt;
-        if(kickoffWait <= 0) isKickoff = false;
+        kickoffWait -= dt; if(kickoffWait <= 0) isKickoff = false;
       } else {
-        timer -= dt;
-        if(timer<=0){ timer=0; gameOver=true; showToast('Fin du match'); }
+        timer -= dt; if(timer<=0){ timer=0; gameOver=true; showToast('Fin du match'); }
       }
 
       if(cameraShake > 0) cameraShake *= 0.9;
       if(cameraShake < 0.5) cameraShake = 0;
 
-      // SÉPARATION PHYSIQUE (Anti-superposition)
       for(let i=0; i<players.length; i++){
         for(let j=i+1; j<players.length; j++){
           const p1 = players[i]; const p2 = players[j];
           const dist = Vec.dist(p1.pos, p2.pos);
-          const minDist = p1.radius + p2.radius + 4; // Un peu de marge autour du joueur
+          const minDist = p1.radius + p2.radius + 4;
           if(dist < minDist && dist > 0.1){
             const overlap = minDist - dist;
             const push = p1.pos.clone().sub(p2.pos).norm().mul(overlap * 0.5);
-            p1.pos.add(push);
-            p2.pos.sub(push);
+            p1.pos.add(push); p2.pos.sub(push);
           }
         }
       }
 
-      players.forEach(p=>p.update(dt));
-      ball.update();
+      players.forEach(p=>p.update(dt)); ball.update();
 
       particles.forEach(p=>{
-        if(p.type === 'confetti') {
-          p.x += Math.sin(p.life * p.swaySpeed) * 2;
-          p.y += p.vy; p.vy = Math.min(p.vy + 0.1, 3);
-        } else {
-          p.x+=p.vx; p.y+=p.vy; p.vx*=.94; p.vy*=.94;
-        }
+        if(p.type === 'confetti') { p.x += Math.sin(p.life * p.swaySpeed) * 2; p.y += p.vy; p.vy = Math.min(p.vy + 0.1, 3); }
+        else { p.x+=p.vx; p.y+=p.vy; p.vx*=.94; p.vy*=.94; }
         p.life--;
       });
       particles = particles.filter(p=>p.life>0);
@@ -759,23 +709,17 @@
     }
     function consumeMobile(k){
       const val = mobileState[k] && !lastMobileState[k];
-      if(val) lastMobileState[k] = true;
-      return val;
+      if(val) lastMobileState[k] = true; return val;
     }
 
     function draw(){
       ctx.save();
-      if(cameraShake > 0) {
-        ctx.translate(Math.random()*cameraShake - cameraShake/2, Math.random()*cameraShake - cameraShake/2);
-      }
+      if(cameraShake > 0) ctx.translate(Math.random()*cameraShake - cameraShake/2, Math.random()*cameraShake - cameraShake/2);
 
-      drawField();
-      drawPassHint();
+      drawField(); drawPassHint();
       const sorted=[...players].sort((a,b)=>a.pos.y-b.pos.y);
       sorted.forEach(p=>p.draw());
-      ball.draw();
-      drawParticles();
-      ctx.restore();
+      ball.draw(); drawParticles(); ctx.restore();
 
       let topText = `<span>${teamAData.name}</span><span>${scoreA}</span><span>-</span><span>${scoreB}</span><span>${teamBData.name}</span><span>⏱ ${Math.ceil(timer)}</span>`;
       if(isKickoff && kickoffWait > 0 && !gameOver) topText += ` <span style="color:#ffe66b; margin-left:15px;">PRÊT... ${Math.ceil(kickoffWait)}</span>`;
@@ -785,8 +729,7 @@
     }
 
     function drawField(){
-      ctx.clearRect(0,0,W,H);
-      ctx.fillStyle='#12301f'; ctx.fillRect(0,0,W,H);
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#12301f'; ctx.fillRect(0,0,W,H);
       for(let i=0;i<12;i++){ ctx.fillStyle=i%2?'#197846':'#1d844e'; ctx.fillRect(field.x+i*field.w/12,field.y,field.w/12,field.h); }
       ctx.strokeStyle='rgba(255,255,255,.52)'; ctx.lineWidth=3; ctx.strokeRect(field.x,field.y,field.w,field.h);
       ctx.beginPath(); ctx.moveTo(W/2,field.y); ctx.lineTo(W/2,field.y+field.h); ctx.stroke();
@@ -799,20 +742,15 @@
 
     function drawPassHint(){
       if(!controlledPlayer || !controlledPlayer.hasBall) return;
-      const target = findBestMate(controlledPlayer);
-      if(!target) return;
+      const target = findBestMate(controlledPlayer); if(!target) return;
       ctx.save(); ctx.setLineDash([6,7]); ctx.strokeStyle='rgba(255,246,165,.45)'; ctx.lineWidth=2;
       ctx.beginPath(); ctx.moveTo(controlledPlayer.pos.x,controlledPlayer.pos.y); ctx.lineTo(target.pos.x,target.pos.y); ctx.stroke(); ctx.restore();
     }
 
     function findBestMate(p){
-      const mates=players.filter(m=>m.team===p.team && m!==p);
-      let best=null, bestScore=-99999;
-      const facing = getPlayerFacing(p);
+      const mates=players.filter(m=>m.team===p.team && m!==p); let best=null, bestScore=-99999; const facing = getPlayerFacing(p);
       for(const m of mates){
-        const to = m.pos.clone().sub(p.pos);
-        const dir = to.clone().norm();
-        const align = dir.x * facing.x + dir.y * facing.y;
+        const to = m.pos.clone().sub(p.pos); const dir = to.clone().norm(); const align = dir.x * facing.x + dir.y * facing.y;
         if(align < 0.35) continue;
         let score = align * 150 - to.len() * 0.16;
         if(isPassLaneBlocked(p.pos,m.pos,p.team)) score -= 115;
@@ -836,34 +774,18 @@
     function launchConfetti(){
       const colors = ['#ff4d4d', '#48dbfb', '#ffe66b', '#1dd1a1', '#f368e0'];
       for(let i=0; i<150; i++){
-        particles.push({
-          x: randomRange(0, W), y: randomRange(-50, 0),
-          vx: 0, vy: randomRange(0.5, 3),
-          life: randomRange(120, 200), type: 'confetti',
-          c: colors[Math.floor(Math.random()*colors.length)],
-          s: randomRange(4, 8), swaySpeed: randomRange(0.05, 0.15)
-        });
+        particles.push({ x: randomRange(0, W), y: randomRange(-50, 0), vx: 0, vy: randomRange(0.5, 3), life: randomRange(120, 200), type: 'confetti', c: colors[Math.floor(Math.random()*colors.length)], s: randomRange(4, 8), swaySpeed: randomRange(0.05, 0.15) });
       }
     }
 
     function playCrowdRoar() {
       if(audioCtx.state === 'suspended') return;
-      const bufferSize = audioCtx.sampleRate * 2;
-      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const data = buffer.getChannelData(0);
+      const bufferSize = audioCtx.sampleRate * 2; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-      const noise = audioCtx.createBufferSource();
-      noise.buffer = buffer;
-      const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(400, audioCtx.currentTime);
-      filter.frequency.linearRampToValueAtTime(1200, audioCtx.currentTime + 0.5);
-      filter.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 2);
-      const gain = audioCtx.createGain();
-      gain.gain.setValueAtTime(0, audioCtx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.5);
-      gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 2);
-      noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
-      noise.start();
+      const noise = audioCtx.createBufferSource(); noise.buffer = buffer;
+      const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.setValueAtTime(400, audioCtx.currentTime); filter.frequency.linearRampToValueAtTime(1200, audioCtx.currentTime + 0.5); filter.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 2);
+      const gain = audioCtx.createGain(); gain.gain.setValueAtTime(0, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.5); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 2);
+      noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); noise.start();
     }
 
     function showToast(t){ toastEl.textContent=t; toastEl.style.opacity=1; toastTimer=2.0; }
@@ -873,9 +795,7 @@
     function randomRange(a,b){ return a+Math.random()*(b-a); }
     function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r); ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h); ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r); ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath(); }
 
-    const stick = document.getElementById('stick');
-    const nub = document.getElementById('nub');
-
+    const stick = document.getElementById('stick'); const nub = document.getElementById('nub');
     stick.addEventListener('pointerdown', e=>{ stickActive=true; stick.setPointerCapture(e.pointerId); updateStick(e); });
     stick.addEventListener('pointermove', e=>{ if(stickActive) updateStick(e); });
     stick.addEventListener('pointerup', resetStick); stick.addEventListener('pointercancel', resetStick);
@@ -892,9 +812,7 @@
       b.addEventListener('pointerleave', e=>{ mobileState[b.dataset.action]=false; });
     });
 
-    createMenu();
-    ball = new Ball();
-    requestAnimationFrame(loop);
+    createMenu(); ball = new Ball(); requestAnimationFrame(loop);
   })();
 </script>
 </body>
