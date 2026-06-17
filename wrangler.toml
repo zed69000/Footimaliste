@@ -1,0 +1,5 @@
+name = "foot"
+compatibility_date = "2024-06-17"
+
+# Tell Wrangler to deploy the contents of the "public" folder
+assets = { directory = "./public" }
