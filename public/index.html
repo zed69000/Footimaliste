@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Bounce FC - Edition Arcade Punchy</title>
+  <title>Bounce FC - Edition Arcade Réglée</title>
   <style>
     :root {
       --bg: #0f1518; --panel: rgba(8, 13, 16, 0.78); --line: rgba(255,255,255,.16);
@@ -113,9 +113,9 @@
 <div id="toast"></div>
 <div id="help">
   ZQSD / flèches : bouger · Shift : Sprint<br>
-  Espace / X : relâcher pour Tirer/Passer quand la jauge est pleine !<br>
+  Espace / X : relâcher pour Tirer/Passer<br>
   (Reprise de volée : Tirer juste avant de recevoir la balle)<br>
-  C : tacle (désormais glissant et traversant) · Tab : switch
+  C : tacle glissé · Tab : switch
 </div>
 
 <div id="mobileControls">
@@ -132,7 +132,7 @@
 <div id="menu">
   <div class="panel">
     <h1>Bounce FC</h1>
-    <div class="sub">Tacles glissés permissifs, reprises de volée ravageuses et grand terrain !</div>
+    <div class="sub">Tacles permissifs, reprises de volée, grand terrain et caméra dynamique !</div>
     <div class="countries" id="countryList"></div>
     <button id="startBtn">LANCER LE MATCH</button>
   </div>
@@ -146,7 +146,6 @@
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
 
-// Redimensionnement dynamique
     let scrW, scrH;
     function resize() {
       scrW = window.innerWidth; scrH = window.innerHeight;
@@ -190,9 +189,8 @@
     let teamAData = countries.france;
     let teamBData = countries.brazil;
 
-// TERRAIN BEAUCOUP PLUS GRAND
-    const field = { x:0, y:0, w:1800, h:1000, goalSize:220 };
-// CAMERA DYNAMIQUE
+// TERRAIN AJUSTÉ (Un peu plus petit pour garder la maîtrise)
+    const field = { x:0, y:0, w:1400, h:850, goalSize:220 };
     let cam = { x: field.w/2, y: field.h/2, zoom: 0.8 };
 
     let players = []; let particles = []; let ball;
@@ -233,7 +231,6 @@
         this.size = role === 'keeper' ? 32 : 30; this.radius = this.size * .58;
         this.hasBall = false; this.isControlled = false;
 
-        // VITESSE AUGMENTÉE (AI plus péchue)
         this.baseSpeed = (role === 'keeper' ? 1.6 : 1.9) * country.speed;
         this.accel = 0.35; this.friction = 0.82;
 
@@ -243,21 +240,23 @@
       }
 
       update(dt){
+        // Si engagement en cours, on fige totalement le joueur
+        if(kickoffWait > 0 && isKickoff) {
+          this.pos = getBasePosition(this);
+          this.vel.set(0,0);
+          this.target = this.pos.clone();
+          return;
+        }
+
         if(this.tackleCooldown>0) this.tackleCooldown--;
         if(this.isTackling>0) this.isTackling--;
         if(this.stun>0) this.stun--;
         if(this.flash>0) this.flash--;
         if(this.stamina < 100) this.stamina += 0.4;
 
-        if(this.stun <= 0 && kickoffWait <= 0){
+        if(this.stun <= 0){
           if(this.isControlled && this.team === controlledTeam) this.controlInput(dt);
           else this.ai(dt);
-        }
-
-        if(kickoffWait > 0 && isKickoff) {
-          this.target = getBasePosition(this);
-          const toTarget = this.target.clone().sub(this.pos);
-          if(toTarget.len() > 5) this.vel.add(toTarget.norm().mul(this.baseSpeed * 0.15));
         }
 
         if(this.vel.len() > 0.2) this.lastFace = this.vel.clone().norm();
@@ -280,30 +279,26 @@
         const isSprinting = (keys.shift || mobileState['sprint']) && dir.len() > 0 && this.stamina > 2;
         if(isSprinting){ currentSpeed *= 1.5; this.stamina -= 1.2; }
 
-        // On ignore les inputs de mouvement si on est en train de tacler (glissade)
         if(dir.len() > 0 && this.isTackling <= 0){ dir.norm().mul(currentSpeed * this.accel); this.vel.add(dir); }
 
         const wantsPass = keys[' '] || mobileState['pass'];
         const wantsShoot = keys.x || mobileState['shoot'];
 
-        // MECANIQUE DE VOLÉE (Sans avoir la balle)
         if (!this.hasBall && wantsShoot && !ball.owner) {
           const distToBall = Vec.dist(this.pos, ball.pos);
           if (distToBall < 65) {
-            // SUPER REPRISE DE VOLÉE !
             let shootDir = this.lastFace.clone().norm();
             const goalX = this.team === TEAM_A ? field.x + field.w : field.x;
             const toGoal = new Vec(goalX, field.h/2).sub(this.pos).norm();
             if (shootDir.x * toGoal.x + shootDir.y * toGoal.y > -0.2) shootDir = shootDir.mul(0.3).add(toGoal.mul(0.7)).norm();
 
-            // Tir monumental (Power 24)
             releaseBallFromPos(ball.pos, shootDir, 24 * this.country.power);
             cameraShake = 25;
             pop(ball.pos.x, ball.pos.y, '#ff3300', 30);
-            playSynth('square', 300, 50, 0.4, 0.3); // Son super lourd
-            this.stun = 15; // Léger recul/relais
+            playSynth('square', 300, 50, 0.4, 0.3);
+            this.stun = 15;
             showToast("VOLÉE !");
-            return; // Stoppe l'input pour cette frame
+            return;
           }
         }
 
@@ -352,7 +347,6 @@
         const toTarget = this.target.clone().sub(this.pos);
         const dist = toTarget.len();
 
-        // IA plus agressive sur les tacles
         if(isClosest && !attacking && !freeBall && this.tackleCooldown <= 0 && dist < 60) tackle(this);
 
         if (dist > 4 && this.isTackling <= 0) {
@@ -381,19 +375,17 @@
         const ownGoalX = this.team === TEAM_A ? field.x + 60 : field.x + field.w - 60;
         const factor = this.role === 'keeper' ? 0.035 : this.role === 'defender' ? 0.15 : this.role === 'mid' ? 0.35 : 0.6;
         const x = ownGoalX + (ball.pos.x - ownGoalX) * factor;
-        // Espacement défensif beaucoup plus large !
-        const baseLaneY = (field.h / 2) + (this.index - 2.5) * 85;
+        const baseLaneY = (field.h / 2) + (this.index - 2.5) * 85; // Recalibré
         const y = baseLaneY + (ball.pos.y - field.h / 2) * 0.25;
         this.target = new Vec(clamp(x, field.x + 40, field.x + field.w - 40), clamp(y, field.y + 40, field.y + field.h - 40));
       }
 
       enemyDecision(dt){
-        this.charge += dt * 120; // Charge plus vite
+        this.charge += dt * 120;
         const enemyGoalX = this.team === TEAM_A ? field.x + field.w : field.x;
         const distGoal = Math.abs(this.pos.x - enemyGoalX);
         const centerBias = Math.abs(this.pos.y - field.h/2);
 
-        // IA tire de plus loin et plus fort
         if(distGoal < 450 && centerBias < 250 && this.charge > 30) {
           shootBall(this, 0.8 + Math.random()*0.2); this.charge = 0;
         } else if(this.charge > 20) {
@@ -458,7 +450,7 @@
 
     function getBasePosition(p) {
       const dir = p.team === TEAM_A ? 1 : -1; const lane = (p.index - 2.5) * 80; const startX = field.x + field.w / 2;
-      const offsets = { keeper: new Vec(-dir * (field.w / 2 - 40), 0), defender: new Vec(-dir * 300, lane * 0.8), mid: new Vec(0, lane), striker: new Vec(dir * 300, lane * 0.9) };
+      const offsets = { keeper: new Vec(-dir * (field.w / 2 - 40), 0), defender: new Vec(-dir * 250, lane * 0.8), mid: new Vec(0, lane), striker: new Vec(dir * 200, lane * 0.9) };
       return new Vec(startX, field.h / 2).add(offsets[p.role] || new Vec());
     }
 
@@ -469,7 +461,14 @@
         this.trail = [];
       }
       update(){
-        if(kickoffWait > 0 && isKickoff) return;
+        if(kickoffWait > 0 && isKickoff) {
+          // Fixée sur le porteur pendant l'engagement ou au centre
+          if (this.owner) {
+            const d = getPlayerFacing(this.owner);
+            this.pos.x = this.owner.pos.x + d.x*22; this.pos.y = this.owner.pos.y + d.y*22;
+          }
+          return;
+        }
 
         if(this.vel.len() > 3) {
           this.trail.push(this.pos.clone());
@@ -504,7 +503,6 @@
 
         for(const p of players){
           const d = Vec.dist(this.pos,p.pos);
-          // On s'attache à la balle seulement si on ne tacle pas à travers !
           if(d < this.radius + p.radius && p.stun <= 0 && p.isTackling <= 0){
             attachBall(p); pop(this.pos.x,this.pos.y,'#fff',7); break;
           }
@@ -567,7 +565,6 @@
       ball.owner = null; ball.vel = dir.norm().mul(power); kickFlash = 6;
     }
 
-// Pour la volée
     function releaseBallFromPos(pos, dir, power){
       if(ball.owner) ball.owner.hasBall = false;
       ball.owner = null; ball.pos = pos.clone(); ball.vel = dir.norm().mul(power); kickFlash = 8;
@@ -614,7 +611,6 @@
         dir = new Vec(goalX, aimY).sub(p.pos).norm();
       }
 
-      // TIRS ENCORE PLUS FORTS (max 22 !)
       const pwr = (10 + 12 * chargeRatio) * p.country.power;
       releaseBall(dir, pwr);
       pop(p.pos.x, p.pos.y, '#ffe66b', 18);
@@ -623,30 +619,20 @@
     }
 
     function tackle(p){
-      p.tackleCooldown = 50;
-      p.isTackling = 18; // Durée de la glissade
+      p.tackleCooldown = 50; p.isTackling = 18;
       const dir = getPlayerFacing(p);
 
-      // Gros boost de vitesse pour la glissade !
       p.vel.add(dir.clone().mul(12 * p.country.tackle));
       pop(p.pos.x,p.pos.y,'#9be7ff',8);
       playSynth('triangle', 150, 50, 0.1, 0.05);
 
       for(const o of players){
         if(o===p || o.team===p.team) continue;
-
-        // ON NE PEUT TACLER QUE CELUI QUI A LA BALLE !
         if(o.hasBall && Vec.dist(p.pos,o.pos) < 55){
-          o.stun = 45;
-          o.flash = 6;
-
-          // On vole la balle et on glisse à travers lui !
-          o.hasBall = false;
-          ball.owner = null;
+          o.stun = 45; o.flash = 6;
+          o.hasBall = false; ball.owner = null;
           attachBall(p);
-
-          cameraShake = 12;
-          pop(o.pos.x,o.pos.y,'#ff4d4d',20);
+          cameraShake = 12; pop(o.pos.x,o.pos.y,'#ff4d4d',20);
           playSynth('sawtooth', 100, 40, 0.2, 0.2);
         }
       }
@@ -686,8 +672,13 @@
     function triggerKickoff(kickoffTeam){
       isKickoff = true; kickoffWait = 3;
       ball.pos = new Vec(field.w/2,field.h/2); ball.vel = new Vec(); ball.owner = null; ball.trail = [];
+
+      // Figer tout le monde
+      players.forEach(p => { p.vel.set(0,0); p.pos = getBasePosition(p); p.stun = 0; p.isTackling = 0; p.charge = 0; });
+
+      // Attacher direct au milieu
       const starter = players.find(p=>p.team===kickoffTeam && p.role==='mid') || players[3];
-      setTimeout(() => { if(!gameOver) attachBall(starter); }, 3000);
+      attachBall(starter);
     }
 
     function restart(){ scoreA=0; scoreB=0; timer=90; gameOver=false; ball = new Ball(); createTeams(); }
@@ -714,24 +705,33 @@
       if(gameOver){ if(keys.r) restart(); updateKeys(); return; }
       if(keys.r) restart();
 
+      // Gestion propre de l'engagement
       if(kickoffWait > 0) {
-        kickoffWait -= dt; if(kickoffWait <= 0) isKickoff = false;
+        kickoffWait -= dt;
+        if(kickoffWait <= 0) { isKickoff = false; }
       } else {
         timer -= dt; if(timer<=0){ timer=0; gameOver=true; showToast('Fin du match'); }
       }
 
-      // GESTION CAMERA DYNAMIQUE
-      let targetZoom = scrW < 800 ? 0.6 : 0.8; // Base zoom (dézoomé sur mobile)
-      if (ball.vel.len() > 12) targetZoom *= 0.85; // Dézoom dynamique sur frappe
+      // GESTION CAMERA INTELLIGENTE (Mix Joueur + Balle)
+      let targetZoom = scrW < 800 ? 0.6 : 0.8;
+      if (ball.vel.len() > 12) targetZoom *= 0.85;
       cam.zoom += (targetZoom - cam.zoom) * 0.05;
 
-      let camTargetX = controlledPlayer && controlledPlayer.hasBall ? controlledPlayer.pos.x : ball.pos.x;
-      let camTargetY = controlledPlayer && controlledPlayer.hasBall ? controlledPlayer.pos.y : ball.pos.y;
+      let camTargetX = field.w/2;
+      let camTargetY = field.h/2;
 
-      cam.x += (camTargetX - cam.x) * 0.08;
-      cam.y += (camTargetY - cam.y) * 0.08;
+      if (controlledPlayer) {
+        // Suit à 65% le joueur contrôlé et 35% la balle pour toujours voir l'action
+        camTargetX = controlledPlayer.pos.x * 0.65 + ball.pos.x * 0.35;
+        camTargetY = controlledPlayer.pos.y * 0.65 + ball.pos.y * 0.35;
+      } else {
+        camTargetX = ball.pos.x; camTargetY = ball.pos.y;
+      }
 
-      // Limites caméra
+      cam.x += (camTargetX - cam.x) * 0.1;
+      cam.y += (camTargetY - cam.y) * 0.1;
+
       const minCamX = scrW/(2*cam.zoom); const maxCamX = field.w - scrW/(2*cam.zoom);
       const minCamY = scrH/(2*cam.zoom); const maxCamY = field.h - scrH/(2*cam.zoom);
       cam.x = clamp(cam.x, minCamX, maxCamX);
@@ -743,10 +743,7 @@
       for(let i=0; i<players.length; i++){
         for(let j=i+1; j<players.length; j++){
           const p1 = players[i]; const p2 = players[j];
-
-          // On ignore la collision si l'un des deux tacle (glissade traversante) !
           if(p1.isTackling > 0 || p2.isTackling > 0) continue;
-
           const dist = Vec.dist(p1.pos, p2.pos);
           const minDist = p1.radius + p2.radius + 4;
           if(dist < minDist && dist > 0.1){
@@ -786,7 +783,6 @@
       ctx.clearRect(0,0,scrW,scrH);
       ctx.fillStyle='#0b0f11'; ctx.fillRect(0,0,scrW,scrH);
 
-      // Application de la caméra
       ctx.translate(scrW/2, scrH/2);
       ctx.scale(cam.zoom, cam.zoom);
       ctx.translate(-cam.x, -cam.y);
@@ -796,9 +792,36 @@
       drawField(); drawPassHint();
       const sorted=[...players].sort((a,b)=>a.pos.y-b.pos.y);
       sorted.forEach(p=>p.draw());
-      ball.draw(); drawParticles(); ctx.restore();
+      ball.draw(); drawParticles();
 
-      // UI (Reste fixe à l'écran)
+      ctx.restore(); // Retour au repère de l'écran pour l'UI absolue
+
+      // INDICATEUR HORS-ECRAN
+      if (controlledPlayer && !isKickoff) {
+        const px = controlledPlayer.pos.x; const py = controlledPlayer.pos.y;
+        const screenX = scrW/2 + (px - cam.x) * cam.zoom;
+        const screenY = scrH/2 + (py - cam.y) * cam.zoom;
+        const margin = 35; // Marge depuis le bord
+
+        // Si le joueur sort de la zone visible
+        if (screenX < margin || screenX > scrW - margin || screenY < margin || screenY > scrH - margin) {
+          const ix = clamp(screenX, margin, scrW - margin);
+          const iy = clamp(screenY, margin, scrH - margin);
+          const angle = Math.atan2(screenY - scrH/2, screenX - scrW/2);
+
+          ctx.save();
+          ctx.translate(ix, iy);
+          ctx.rotate(angle);
+          ctx.fillStyle = '#ffe66b';
+          ctx.beginPath();
+          ctx.moveTo(18, 0); ctx.lineTo(-12, 12); ctx.lineTo(-6, 0); ctx.lineTo(-12, -12);
+          ctx.closePath(); ctx.fill();
+          ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.stroke();
+          ctx.restore();
+        }
+      }
+
+      // UI Fixe
       let topText = `<span>${teamAData.name}</span><span>${scoreA}</span><span>-</span><span>${scoreB}</span><span>${teamBData.name}</span><span>⏱ ${Math.ceil(timer)}</span>`;
       if(isKickoff && kickoffWait > 0 && !gameOver) topText += ` <span style="color:#ffe66b; margin-left:15px;">PRÊT... ${Math.ceil(kickoffWait)}</span>`;
       topUi.innerHTML = topText;
@@ -813,10 +836,8 @@
       ctx.beginPath(); ctx.moveTo(field.w/2,field.y); ctx.lineTo(field.w/2,field.y+field.h); ctx.stroke();
       ctx.beginPath(); ctx.arc(field.w/2,field.h/2,120,0,Math.PI*2); ctx.stroke();
 
-      // Surfaces de réparation
       ctx.strokeRect(field.x,field.h/2-180,200,360); ctx.strokeRect(field.x+field.w-200,field.h/2-180,200,360);
 
-      // Buts
       ctx.fillStyle='#0b0e10'; ctx.fillRect(field.x-30,field.h/2-field.goalSize/2,30,field.goalSize); ctx.fillRect(field.x+field.w,field.h/2-field.goalSize/2,30,field.goalSize);
       ctx.fillStyle='rgba(255,255,255,.12)'; ctx.fillRect(field.x-15,field.h/2-field.goalSize/2,15,field.goalSize); ctx.fillRect(field.x+field.w,field.h/2-field.goalSize/2,15,field.goalSize);
       if(kickFlash>0){ ctx.fillStyle=`rgba(255,230,107,${kickFlash/40})`; ctx.fillRect(field.x,field.y,field.w,field.h); }
@@ -856,7 +877,6 @@
     function launchConfetti(){
       const colors = ['#ff4d4d', '#48dbfb', '#ffe66b', '#1dd1a1', '#f368e0'];
       for(let i=0; i<150; i++){
-        // Spawn relatif au terrain pour la caméra
         particles.push({ x: cam.x + randomRange(-scrW, scrW), y: cam.y + randomRange(-scrH/2, 0), vx: 0, vy: randomRange(0.5, 3), life: randomRange(120, 200), type: 'confetti', c: colors[Math.floor(Math.random()*colors.length)], s: randomRange(4, 8), swaySpeed: randomRange(0.05, 0.15) });
       }
     }
