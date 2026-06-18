@@ -125,6 +125,28 @@
 }
 
 @media(max-height:520px) and (orientation:landscape){#menu{padding:8px}.panel{padding:10px}.cup{display:none}h1{font-size:36px}.sub{display:none}.modeRow{grid-template-columns:repeat(3,1fr);gap:6px}.modeBtn{min-height:38px}.countries{grid-template-columns:repeat(4,1fr);max-height:180px;overflow-y:auto}.country{min-height:62px;display:grid;grid-template-columns:30px 1fr;column-gap:6px;padding:5px}.kit{width:28px;height:28px;grid-row:1/3;margin:0}.stats{font-size:9px}.startBtn{height:46px;margin-top:8px}}
+
+
+/* PATCH MOBILE PAYSAGE INPUTS
+   Correction principale : en paysage réel, certains téléphones ont une largeur > 820px,
+   donc l'ancien media query ne montrait plus correctement les contrôles. Bravo le web mobile. */
+@media (hover:none), (pointer:coarse), (max-height:560px) and (orientation:landscape){
+  #mobileControls{display:block;z-index:24;pointer-events:none;}
+  #help{display:none!important;}
+  .btns{right:calc(env(safe-area-inset-right,0px) + 12px);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:60;pointer-events:auto;}
+  .mbtn{width:76px;height:76px;pointer-events:auto;touch-action:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;}
+  .stickBase{left:calc(env(safe-area-inset-left,0px) + 18px);bottom:calc(env(safe-area-inset-bottom,0px) + 16px);z-index:50;pointer-events:auto;touch-action:none;}
+  .modeBtn,.startBtn,.country,.smallBtn{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+}
+@media (orientation:landscape) and (max-height:560px){
+  canvas{width:min(100dvw,calc(100dvh * 16 / 9));height:min(100dvh,calc(100dvw * 9 / 16));}
+  #menu{padding:8px calc(env(safe-area-inset-right,0px) + 8px) 8px calc(env(safe-area-inset-left,0px) + 8px);}
+  #menu .panel{max-width:980px;margin:0 auto;padding:10px;}
+  #menu .countries{grid-template-columns:repeat(4,1fr);max-height:calc(100dvh - 210px);overflow-y:auto;}
+  #menu .startBtn{position:sticky;bottom:8px;z-index:80;}
+  #topUi{max-width:60vw;}
+}
+
 </style>
 </head>
 <body>
@@ -223,11 +245,29 @@ function actionPress(a){return pressed[actionKey(a)]||mobPressed[a]||gpPressed[a
 function showIntro(){introTeams.textContent=teamA.name+'  contre  '+teamB.name;introStats.innerHTML=`<b>Capitaines</b> : ${captainName(TA)}  vs  ${captainName(TB)}<br>${stars(teamA.speed)} Vitesse · ${stars(teamA.power)} Tir · ${stars(teamA.pass)} Passe · ${stars(teamA.tackle)} Tacle<br>${stars(teamB.speed)} Vitesse · ${stars(teamB.power)} Tir · ${stars(teamB.pass)} Passe · ${stars(teamB.tackle)} Tacle`;matchIntro.style.display='flex'}
 function stars(v){return v>=1.12?'★★★':v>=1.02?'★★☆':v>=.96?'★☆☆':'☆☆☆'}
 function initDebug(){document.querySelectorAll('#debugPanel input[data-bal]').forEach(inp=>{const k=inp.dataset.bal;inp.value=BAL[k];const val=document.querySelector(`[data-val="${k}"]`);const sync=()=>{BAL[k]=parseFloat(inp.value);if(val)val.textContent=BAL[k].toFixed(2)};inp.addEventListener('input',sync);sync()})}
+function isMobileLike(){return matchMedia('(hover:none), (pointer:coarse)').matches||innerWidth<980||innerHeight<560}
+async function requestLandscapeMode(){
+  if(!isMobileLike())return;
+  const root=document.documentElement;
+  try{if(root.requestFullscreen&&!document.fullscreenElement){await root.requestFullscreen({navigationUI:'hide'}).catch(()=>{});}}catch(_){ }
+  try{if(screen.orientation&&screen.orientation.lock){await screen.orientation.lock('landscape').catch(()=>{});}}catch(_){ }
+}
+function mobileButtonAt(x,y){let best=null,bestArea=Infinity;document.querySelectorAll('.mbtn').forEach(b=>{const r=b.getBoundingClientRect(),pad=10;if(x>=r.left-pad&&x<=r.right+pad&&y>=r.top-pad&&y<=r.bottom+pad){const area=r.width*r.height;if(area<bestArea){best=b;bestArea=area}}});return best}
+function forceMobileButton(action,isDown){if(!action)return;const btn=document.querySelector(`.mbtn[data-action="${action}"]`);if(isDown){if(!mobDown[action])mobPressed[action]=true;mobDown[action]=true;if(btn)btn.classList.add('down')}else{if(mobDown[action])mobReleased[action]=true;mobDown[action]=false;if(btn)btn.classList.remove('down')}}
+
 function pollGamepad(){gpMove.x=0;gpMove.y=0;for(const k in gpPressed)delete gpPressed[k];for(const k in gpReleased)delete gpReleased[k];const pads=navigator.getGamepads?navigator.getGamepads():[];const g=[...pads].find(p=>p&&p.connected);if(!g)return;let x=g.axes[0]||0,y=g.axes[1]||0;const l=Math.hypot(x,y);if(l>0.18){const power=Math.min(1,(l-0.18)/0.82);gpMove.x=x/l*power;gpMove.y=y/l*power}else{gpMove.x=0;gpMove.y=0}for(const action in GP_MAP){const isDown=GP_MAP[action].some(i=>g.buttons[i]&&g.buttons[i].pressed);if(isDown&&!gpPrev[action])gpPressed[action]=true;if(!isDown&&gpPrev[action])gpReleased[action]=true;gpDown[action]=isDown;gpPrev[action]=isDown}}
 addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(!keys[k])pressed[k]=true;keys[k]=true;if(k==='tab')e.preventDefault()});addEventListener('keyup',e=>{const k=e.key.toLowerCase();keys[k]=false;released[k]=true});
 function clearInput(){for(const k in pressed)delete pressed[k];for(const k in released)delete released[k];for(const k in mobPressed)delete mobPressed[k];for(const k in mobReleased)delete mobReleased[k];for(const k in gpPressed)delete gpPressed[k];for(const k in gpReleased)delete gpReleased[k]}
 const stick=document.getElementById('stick'),nub=document.getElementById('nub');let sid=null,origin=null;stick.addEventListener('pointerdown',e=>{e.preventDefault();sid=e.pointerId;stick.setPointerCapture(sid);const r=stick.getBoundingClientRect();origin={x:e.clientX,y:e.clientY,left:r.left,top:r.top};stick.style.left=(e.clientX-r.width/2)+'px';stick.style.top=(e.clientY-r.height/2)+'px';stick.style.bottom='auto';stickMove(e)});stick.addEventListener('pointermove',e=>{if(e.pointerId===sid)stickMove(e)});stick.addEventListener('pointerup',stickEnd);stick.addEventListener('pointercancel',stickEnd);function stickMove(e){const max=44;let dx=e.clientX-origin.x,dy=(e.clientY-origin.y)*.82;const l=Math.hypot(dx,dy);if(l<12){mobileMove.x=0;mobileMove.y=0;dx=0;dy=0}else{const cl=Math.min(l,max);const power=(cl/max)**1.35;mobileMove.x=(dx/l)*power;mobileMove.y=(dy/l)*power;if(l>max){dx=dx/l*max;dy=dy/l*max}}nub.style.transform=`translate(${dx}px,${dy}px)`}function stickEnd(e){sid=null;mobileMove.x=0;mobileMove.y=0;nub.style.transform='translate(0,0)';stick.style.left='';stick.style.top='';stick.style.bottom=''}
 document.querySelectorAll('.mbtn').forEach(b=>{const a=b.dataset.action;let active=false;function down(e){if(e)e.preventDefault();if(active)return;active=true;mobPressed[a]=true;mobDown[a]=true;b.classList.add('down')}function up(e){if(e)e.preventDefault();if(!active)return;active=false;mobReleased[a]=true;mobDown[a]=false;b.classList.remove('down')}b.addEventListener('pointerdown',e=>{try{b.setPointerCapture(e.pointerId)}catch(_){}down(e)});b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('touchstart',down,{passive:false});b.addEventListener('touchend',up,{passive:false});b.addEventListener('mousedown',down);b.addEventListener('mouseup',up);b.addEventListener('click',e=>e.preventDefault())});
+// Fallback anti-hitbox décalée : si le navigateur envoie l'événement au mauvais calque,
+// on recalcule le bouton sous le doigt avec getBoundingClientRect().
+addEventListener('pointerdown',e=>{const b=mobileButtonAt(e.clientX,e.clientY);if(!b)return;e.preventDefault();forceMobileButton(b.dataset.action,true)},{capture:true,passive:false});
+addEventListener('pointerup',e=>{for(const k of ['pass','shoot','tackle','switch'])forceMobileButton(k,false)},{capture:true,passive:false});
+addEventListener('pointercancel',e=>{for(const k of ['pass','shoot','tackle','switch'])forceMobileButton(k,false)},{capture:true,passive:false});
+addEventListener('touchstart',e=>{const t=e.changedTouches&&e.changedTouches[0];if(!t)return;const b=mobileButtonAt(t.clientX,t.clientY);if(!b)return;e.preventDefault();forceMobileButton(b.dataset.action,true)},{capture:true,passive:false});
+addEventListener('touchend',e=>{for(const k of ['pass','shoot','tackle','switch'])forceMobileButton(k,false)},{capture:true,passive:false});
+
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))}function rand(a,b){return a+Math.random()*(b-a)}
 buildMenu();ball=new Ball();requestAnimationFrame(loop);
 })();
