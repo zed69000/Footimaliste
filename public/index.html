@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<title>FOOTIMALIST FORCE</title>
+<title>BRUTAL FC - World Cup Arcade</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div id="wrap"><canvas id="game" width="960" height="540"></canvas></div>
-<div id="topUi"><span class="hudCup">🏆</span><span class="hudLabel">>FOOTIMALIST FORCE</span></div><div id="toast"></div>
+<div id="topUi"><span class="hudCup">🏆</span><span class="hudLabel">BRUTAL FC</span></div><div id="toast"></div>
 <div id="hudBtns"><button id="pauseBtn" class="smallBtn">⏸ PAUSE</button></div>
 <div id="debugPanel"><h3>Debug balance</h3>
   <div class="dbgRow"><span>Vitesse x4</span><input data-bal="speed" type="range" min="0.50" max="5.50" step="0.05"><span class="dbgVal" data-val="speed"></span></div>
@@ -28,7 +28,7 @@
 
 <div id="help">ZQSD/flèches ou stick manette : bouger · A/Espace : passe/lob · RB/X : tir · X/C : tacle · RT/Shift : sprint · Y/LB/Tab : switch</div><div id="debugLog"></div>
 <div id="mobileControls"><div class="stickBase dynamicStick" id="stick"><div class="stickNub" id="nub"></div></div><div class="btns" id="mobileBtns"><div class="mbtn" data-action="pass">PASSE</div><div class="mbtn" data-action="shoot">TIR</div><div class="mbtn" data-action="tackle">TACLE</div><div class="mbtn" data-action="sprint">SPRINT</div><div class="mbtn" data-action="switch">SWITCH</div></div></div>
-<div id="menu"><div class="panel menuWizard"><div class="cup"><svg viewBox="0 0 128 128" aria-hidden="true"><path fill="#ffd34a" d="M43 13h42v14h22c-1 22-12 35-28 39-3 7-8 12-15 14v13h20v13H44V93h20V80c-7-2-12-7-15-14-16-4-27-17-28-39h22V13z"/><path fill="#ffef9a" d="M52 22h24v41c-3 5-6 8-12 10-6-2-9-5-12-10V22z"/><path fill="#b87500" d="M23 33h20v11H34c2 8 7 13 14 16l-4 8c-13-5-20-16-21-35zm62 0h20c-1 19-8 30-21 35l-4-8c7-3 12-8 14-16h-9V33z"/><rect fill="#7b3f00" x="40" y="106" width="48" height="10"/></svg></div><h1>FOOTIMALIST FORCE</h1><p class="sub" id="menuSubtitle">Choisis un mode, ton équipe, l’adversaire et le plan de jeu. La démocratie, mais avec des tacles.</p><div class="banner" aria-hidden="true"><div class="crowd"></div><div class="mini m1"></div><div class="mini m2"></div><div class="ballMini"></div><div class="mini m3"></div><div class="splash"></div></div><div id="countryList" class="menuBody"></div><button id="startBtn" class="startBtn">✨ CONTINUER</button><div class="menuHint">Manette/clavier : ↑↓←→ naviguer · A/Entrée valider · B/Echap retour · tactile OK</div></div></div>
+<div id="menu"><div class="panel menuWizard"><div class="cup"><svg viewBox="0 0 128 128" aria-hidden="true"><path fill="#ffd34a" d="M43 13h42v14h22c-1 22-12 35-28 39-3 7-8 12-15 14v13h20v13H44V93h20V80c-7-2-12-7-15-14-16-4-27-17-28-39h22V13z"/><path fill="#ffef9a" d="M52 22h24v41c-3 5-6 8-12 10-6-2-9-5-12-10V22z"/><path fill="#b87500" d="M23 33h20v11H34c2 8 7 13 14 16l-4 8c-13-5-20-16-21-35zm62 0h20c-1 19-8 30-21 35l-4-8c7-3 12-8 14-16h-9V33z"/><rect fill="#7b3f00" x="40" y="106" width="48" height="10"/></svg></div><h1>Brutal FC</h1><p class="sub" id="menuSubtitle">Choisis un mode, ton équipe, l’adversaire et le plan de jeu. La démocratie, mais avec des tacles.</p><div class="banner" aria-hidden="true"><div class="crowd"></div><div class="mini m1"></div><div class="mini m2"></div><div class="ballMini"></div><div class="mini m3"></div><div class="splash"></div></div><div id="countryList" class="menuBody"></div><button id="startBtn" class="startBtn">✨ CONTINUER</button><div class="menuHint">Manette/clavier : ↑↓←→ naviguer · A/Entrée valider · B/Echap retour · tactile OK</div></div></div>
 <script src="game.js"></script>
 <script src="menu.js"></script>
 </body>

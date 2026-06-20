@@ -49,6 +49,20 @@ function renderMenu(){
   setTimeout(()=>setMenuFocus(0),0);
 }
 
+let lastMenuTapAt=0;
+async function launchSelectedGame(){
+  try{
+    await requestLandscapeMode();
+  }catch(e){
+    try{dbgError(e)}catch(_){ }
+  }
+  try{
+    startGame(mode);
+  }catch(e){
+    try{dbgError(e)}catch(_){console.error(e)}
+  }
+}
+
 function menuActivate(el){
   if(!el)return;
   if(el.dataset.modePick){
@@ -78,16 +92,26 @@ function menuActivate(el){
     return renderMenu();
   }
   if(el.dataset.launch!==undefined){
-    return requestLandscapeMode().then(()=>startGame(mode));
+    return launchSelectedGame();
   }
 }
 
-countryList.addEventListener('pointerup',e=>{
+function handleMenuPointer(e){
   const el=e.target.closest('[data-menu-item]');
   if(!el)return;
   e.preventDefault();
+  lastMenuTapAt=performance.now();
   menuActivate(el);
-});
+}
+function handleMenuClick(e){
+  const el=e.target.closest('[data-menu-item]');
+  if(!el)return;
+  if(performance.now()-lastMenuTapAt<450){e.preventDefault();return;}
+  e.preventDefault();
+  menuActivate(el);
+}
+countryList.addEventListener('pointerup',handleMenuPointer,{passive:false});
+countryList.addEventListener('click',handleMenuClick,{passive:false});
 
 function menuNavFrame(){
   if(menu.style.display==='none')return;
@@ -115,18 +139,18 @@ function menuNavFrame(){
 startBtn.addEventListener('pointerup',async e=>{
   e.preventDefault();
   if(menuPage==='mode'){menuPage='team';renderMenu()}
-  else await requestLandscapeMode().then(()=>startGame(mode));
+  else await launchSelectedGame();
 });
 
 pauseBtn.onclick=()=>openPause();
 resumeBtn.onclick=()=>closePause();
-pauseTrainingBtn.onclick=async()=>{await requestLandscapeMode();mode='training';startGame('training')};
-pauseMatchBtn.onclick=async()=>{await requestLandscapeMode();mode='friendly';startGame('friendly')};
+pauseTrainingBtn.onclick=async()=>{mode='training';await launchSelectedGame()};
+pauseMatchBtn.onclick=async()=>{mode='friendly';await launchSelectedGame()};
 pauseDebugBtn.onclick=(e)=>{if(e)e.stopPropagation();debugPanel.classList.toggle('open')};
 debugPanel.addEventListener('pointerdown',e=>e.stopPropagation());
 debugPanel.addEventListener('pointerup',e=>e.stopPropagation());
 pauseMenuBtn.onclick=()=>{gamePaused=false;pauseOverlay.style.display='none';debugPanel.classList.remove('open');menu.style.display='block';hudBtns.style.display='none';matchIntro.style.display='none';goalPause.style.display='none';endOverlay.style.display='none';menuPage='mode';renderMenu()};
-restartBtn.onclick=async()=>{await requestLandscapeMode();startGame(mode)};
+restartBtn.onclick=async()=>{await launchSelectedGame()};
 backMenuBtn.onclick=()=>{endOverlay.style.display='none';menu.style.display='block';hudBtns.style.display='none';menuPage='mode';renderMenu()};
 initDebug();
 
