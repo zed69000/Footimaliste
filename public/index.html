@@ -302,6 +302,78 @@ canvas{position:relative;z-index:1;box-shadow:0 0 0 3px rgba(255,255,255,.06),0 
   .sectionLabel{font-size:9px!important;margin:2px 0!important;}
 }
 
+
+/* --- ULTRA COMPACT MOBILE MENU --- */
+.compactModeGrid{display:grid;grid-template-columns:1fr;gap:6px}
+.compactCard{border:1px solid rgba(255,255,255,.12);border-radius:12px;background:rgba(255,255,255,.055);padding:10px 12px;color:#fff;font-weight:900;text-align:left;min-height:46px;display:flex;align-items:center;gap:10px;touch-action:manipulation}
+.compactCard.selected,.compactCard.focused{background:rgba(255,211,74,.22);border-color:var(--gold);outline:2px solid rgba(255,211,74,.24)}
+.compactCard .cIcon{font-size:18px;line-height:1;flex:0 0 auto}
+.compactCard .cText{display:block;flex:1;font-size:13px;line-height:1.1}
+.compactCard .cText small{display:block;margin-top:2px;color:var(--muted);font-size:10px;font-weight:700}
+.compactSection{margin-top:6px}
+.compactLabel{font-size:10px;font-weight:900;letter-spacing:.8px;text-transform:uppercase;color:#ffd34a;margin:0 0 3px 2px}
+.compactSelector{display:grid;grid-template-columns:32px 1fr 32px;gap:4px;align-items:center}
+.compactArrow{height:40px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:22px;font-weight:900}
+.compactArrow.focused{background:rgba(255,211,74,.22);border-color:var(--gold)}
+.compactTeamCard{min-height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 8px;text-align:center}
+.compactTeamCard .flagBig{font-size:24px}
+.compactTeamCard .teamNameBig{font-size:14px;margin:0;line-height:1.05}
+.compactTeamCard .teamSub,.compactTeamCard .teamBadgeLine,.compactTeamCard .statBadge{display:none!important}
+.compactPills{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.compactPills.two{grid-template-columns:repeat(2,1fr)}
+.miniChoice{min-height:38px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.055);color:#fff;font-weight:900;font-size:11px;padding:4px 6px;text-align:center;display:grid;place-items:center;line-height:1.05;touch-action:manipulation}
+.miniChoice small{display:none}
+.miniChoice.selected,.miniChoice.focused{background:rgba(255,211,74,.22);border-color:var(--gold);outline:2px solid rgba(255,211,74,.24);color:#fff8df}
+.compactFooter{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px}
+.compactFooter .miniChoice{min-height:42px;font-size:12px}
+@media (max-width:820px), (max-height:560px){
+  #menu{overflow:hidden!important;padding:6px!important}
+  #menu .panel.menuWizard{height:calc(100dvh - 12px)!important;max-height:calc(100dvh - 12px)!important;padding:8px!important;border-radius:16px!important;display:flex;flex-direction:column}
+  #menu .cup,#menu .banner,#menu .sub,.menuHint,.menuStepHeader,.stepChips,.menuStepTitle,.menuStepSub,.sectionLabel,.choiceIcon{display:none!important}
+  #menu h1{font-size:24px!important;line-height:.9!important;margin:0 0 6px!important;letter-spacing:-1px!important}
+  #countryList{flex:1;min-height:0;overflow:hidden!important;margin-top:0!important}
+  .simpleSteps,.menuBody{gap:6px!important;margin-top:0!important}
+  .bigChoice,.arrowBtn,.teamPickCard,.pillRow,.simpleSelector{display:none!important}
+  #startBtn{height:38px!important;min-height:38px!important;margin-top:6px!important;border-radius:12px!important;font-size:12px!important;position:static!important}
+}
+
+
+/* --- REAL GAME MOBILE MENU --- */
+.gameHeader{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.gameTitleMini{font-size:11px;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:#ffd34a}
+.gameDots{display:flex;gap:6px}.gameDot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.15)}.gameDot.active{background:#ffd34a;box-shadow:0 0 10px rgba(255,211,74,.65)}
+.heroModes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;height:100%}
+.heroMode{position:relative;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:10px 10px 8px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));display:flex;flex-direction:column;justify-content:space-between;min-height:92px;color:#fff;text-align:left;touch-action:manipulation}
+.heroMode::before{content:'';position:absolute;inset:0;border-radius:16px;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,.10),transparent 28%);pointer-events:none}
+.heroMode.selected,.heroMode.focused{background:linear-gradient(180deg,rgba(255,211,74,.28),rgba(255,112,0,.14));border-color:var(--gold);outline:2px solid rgba(255,211,74,.24)}
+.heroMode .heroIcon{font-size:22px;line-height:1;margin-bottom:2px}.heroMode .heroName{font-size:13px;font-weight:900;line-height:1.05}.heroMode .heroSub{font-size:10px;color:var(--muted);line-height:1.15;margin-top:4px}
+.setupScreen{display:grid;grid-template-rows:auto auto auto 1fr auto;gap:6px;height:100%}
+.duelRow{display:grid;grid-template-columns:1fr 42px 1fr;gap:6px;align-items:stretch}
+.duelCard{position:relative;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));padding:6px 34px;display:flex;align-items:center;justify-content:center;min-height:58px;overflow:hidden}
+.duelCard .flagBig{font-size:26px}.duelCard .teamNameBig{font-size:13px;margin:0;line-height:1.05}.duelCard .teamSub,.duelCard .teamBadgeLine{display:none!important}
+.duelArrow{position:absolute;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.22);color:#fff;font-weight:900;font-size:16px;display:grid;place-items:center}
+.duelArrow.left{left:5px}.duelArrow.right{right:5px}.duelArrow.focused{background:rgba(255,211,74,.22);border-color:var(--gold)}
+.vsCoin{display:grid;place-items:center;border-radius:14px;background:linear-gradient(180deg,#ff4f4f,#930000);color:#fff;font-size:13px;font-weight:900;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.segRow{display:grid;grid-template-columns:1fr 1fr;gap:6px}.segRow.full{grid-template-columns:1fr}
+.segGroup{border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.045);padding:6px}
+.segLabel{font-size:9px;font-weight:900;letter-spacing:.8px;text-transform:uppercase;color:#ffd34a;margin:0 0 5px 2px}
+.segBtns{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.segBtns.two{grid-template-columns:repeat(2,1fr)}
+.segBtn{min-height:30px;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.20);color:#fff;font-weight:900;font-size:10px;line-height:1.05;padding:4px 3px;display:grid;place-items:center;text-align:center;touch-action:manipulation}
+.segBtn.selected,.segBtn.focused{background:rgba(255,211,74,.22);border-color:var(--gold);outline:2px solid rgba(255,211,74,.20);color:#fff8df}
+.segBtn small{display:none}
+.footerBar{display:grid;grid-template-columns:1fr 1.2fr;gap:6px;margin-top:auto}
+.footerBtn{min-height:38px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-weight:900;font-size:12px;touch-action:manipulation}
+.footerBtn.primary{background:linear-gradient(180deg,#ff5a5a,#b40000);border-color:#ff8c8c;box-shadow:0 5px 0 #5a0000}
+.footerBtn.selected,.footerBtn.focused{outline:2px solid rgba(255,211,74,.24)}
+.inlineHelp{font-size:9px;color:var(--muted);text-align:center;margin-top:2px}
+@media (max-width:820px), (max-height:560px){
+  #menu .panel.menuWizard{padding:8px!important}
+  #menu h1{font-size:22px!important;margin:0 0 4px!important;text-align:left!important}
+  #menu #countryList{display:block!important;overflow:hidden!important}
+  #menu .menuBody{height:100%}
+  #menu .menuHint{display:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -530,31 +602,57 @@ function statBadge(icon,label,val){return `<span class="statBadge">${icon} ${lab
 function stepHeader(step,title,sub){return `<div class="menuStepHeader"><div class="stepChips"><div class="stepChip ${step===0?'active':''}">1. Mode</div><div class="stepChip ${step===1?'active':''}">2. Match</div></div><div class="menuStepTitle">${title}</div><div class="menuStepSub">${sub}</div></div>`}
 function choiceCard(icon,title,small,selected,extra=''){return `<button data-menu-item ${extra} class="bigChoice ${selected?'selected':''}"><span class="choiceIcon">${icon}</span><span class="choiceText">${title}<small>${small||''}</small></span></button>`}
 function teamCard(c,label){const ghost=!c||c.name==='Aléatoire';const stats=ghost?`<div class="teamBadgeLine"><span class="statBadge">🎲 Surprise totale</span></div>`:`<div class="teamBadgeLine">${statBadge('⚡','Vit.',c.speed)}${statBadge('💥','Tir',c.power)}${statBadge('🎯','Passe',c.pass)}${statBadge('🛡','Tacle',c.tackle)}</div>`;return `<div class="teamPickCard"><div class="teamCardInner"><div class="flagBig">${ghost?'🎲':flagFor(c)}</div><div class="teamNameBig">${c.name}</div><div class="teamSub">${label||''}</div>${stats}</div></div>`}
-function tacticDots(id){const map={balanced:[[18,50],[18,26],[18,74],[50,50],[82,32],[82,68]],press:[[18,50],[42,24],[42,76],[70,24],[70,76]],counter:[[18,50],[34,26],[34,74],[58,32],[58,68],[82,50]],diamond:[[18,50],[34,50],[54,24],[54,76],[68,50],[82,50]],lock:[[18,50],[34,20],[34,50],[34,80],[62,50],[82,50]]};return (map[id]||map.balanced).map(d=>`<span class="tacticDot" style="left:calc(${d[0]}% - 4px);top:calc(${d[1]}% - 4px)"></span>`).join('')}
-function tacticEmoji(id){return ({balanced:'⚖️',press:'🔥',counter:'⚡',diamond:'🔷',lock:'🧱'})[id]||'🎯'}
-function tacticCard(id,label){const t=TACTICS[id]||TACTICS.balanced;return `<div class="tacticCard"><div class="teamSub">${label}</div><div class="tacticHead"><div class="tacticEmoji">${tacticEmoji(id)}</div><strong>${t.name}</strong></div><div class="tacticPitch">${tacticDots(id)}</div><small>${t.desc}</small></div>`}
+function isCompactMenu(){return window.innerWidth<=920 || window.innerHeight<=620}
+function modeHero(icon,title,sub,selected,extra=''){return `<button data-menu-item ${extra} class="heroMode ${selected?'selected':''}"><div><div class="heroIcon">${icon}</div><div class="heroName">${title}</div></div><div class="heroSub">${sub}</div></button>`}
+function segBtn(text,selected,extra=''){return `<button data-menu-item ${extra} class="segBtn ${selected?'selected':''}">${text}</button>`}
+function duelCard(team,label,prevAttr,nextAttr){const ghost=!team||team.name==='Aléatoire';return `<div class="duelCard"><button data-menu-item ${prevAttr} class="duelArrow left">‹</button><div class="flagBig">${ghost?'🎲':flagFor(team)}</div><div><div class="teamNameBig">${team.name}</div><div class="teamSub">${label||''}</div></div><button data-menu-item ${nextAttr} class="duelArrow right">›</button></div>`}
+function compactHeader(step,label){return `<div class="gameHeader"><div class="gameTitleMini">${label}</div><div class="gameDots"><div class="gameDot ${step===0?'active':''}"></div><div class="gameDot ${step===1?'active':''}"></div></div></div>`}
 function renderMenu(){const sub=document.getElementById('menuSubtitle');
  if(menuPage!=='mode')menuPage='teams';
- if(menuPage==='mode'){
-  sub.textContent='Choisis le type de partie. Ensuite équipe, format, adversaire, et on joue. Pas de salon PowerPoint, merci.';
-  startBtn.style.display='block';startBtn.textContent='✨ CONTINUER';
-  countryList.innerHTML=`${stepHeader(0,'Mode de jeu','Un choix simple, puis direction le terrain.')}`+
-  `<div class="simpleSteps">`+
-  `${choiceCard('🎯','ENTRAÎNEMENT','Tester contrôles, tirs, lobs et reprises.',mode==='training','data-mode-pick="training"')}`+
-  `${choiceCard('🤝','MATCH AMICAL','Choisis équipes et format.',mode==='friendly','data-mode-pick="friendly"')}`+
-  `${choiceCard('🏆','CAMPAGNE','Enchaînement d’adversaires.',mode==='campaign','data-mode-pick="campaign"')}`+
-  `</div>`;
- }else{
-  const opp=opponentRandom?'Aléatoire':countries[selectedOpponent].name;
-  sub.textContent='Choisis ton équipe, le format et l’adversaire. L’IA garde son plan automatiquement.';
-  startBtn.style.display='none';
-  countryList.innerHTML=`${stepHeader(1,'Préparer le match','Équipe, format et adversaire. Le reste, c’est du football, pas un formulaire administratif.')}`+
-  `<div class="sectionLabel">👕 TON ÉQUIPE</div><div class="simpleSelector"><button data-menu-item data-team-prev class="arrowBtn">‹</button>${teamCard(teamA,'Équipe contrôlée')}<button data-menu-item data-team-next class="arrowBtn">›</button></div>`+
-  `<div class="sectionLabel">⚽ FORMAT</div><div class="pillRow">${choiceCard('2️⃣','2 VS 2','Très direct.',matchSize===2,'data-size="2"')}${choiceCard('3️⃣','3 VS 3','Action + placements.',matchSize===3,'data-size="3"')}${choiceCard('5️⃣','5 VS 5','Le plus complet.',matchSize===5,'data-size="5"')}</div>`+
-  `<div class="sectionLabel">🎮 JOUEURS</div><div class="pillRow">${choiceCard('1️⃣','SOLO','Toi contre l’IA.',controlMode==='solo','data-control="solo"')}${choiceCard('⚔️','2 JOUEURS VS','P1 contre P2.',controlMode==='pvp','data-control="pvp"')}${choiceCard('🤝','2 JOUEURS COOP','P1 + P2 même équipe.',controlMode==='coop','data-control="coop"')}</div>`+
-  `<div class="sectionLabel">🧭 ADVERSAIRE</div><div class="pillRow two">${choiceCard('🎲','ALÉATOIRE','Rival choisi au lancement.',opponentRandom,'data-opp-random')}${choiceCard('🛡','CHOISIR',opponentRandom?'Sélection manuelle.':flagFor(countries[selectedOpponent])+' '+opp,!opponentRandom,'data-opp-select')}</div>`+
-  `<div class="simpleSelector ${opponentRandom?'navSoft':''}"><button data-menu-item data-opp-prev class="arrowBtn">‹</button>${teamCard(opponentRandom?{name:'Aléatoire'}:countries[selectedOpponent],opponentRandom?'Le tirage décide du rival.':'Adversaire sélectionné')}<button data-menu-item data-opp-next class="arrowBtn">›</button></div>`+
-  `<div class="pillRow two">${choiceCard('↩️','RETOUR','Revenir au mode.',false,'data-back')}${choiceCard('⚽','LANCER','Entrer sur le terrain.',true,'data-launch')}</div>`;
+ const compact=isCompactMenu();
+ if(compact){
+   startBtn.style.display='none';
+   if(menuPage==='mode'){
+     sub.textContent='';
+     countryList.innerHTML = compactHeader(0,'Choix du mode')+
+       `<div class="heroModes">`+
+       `${modeHero('🎯','ENTRAÎNEMENT','Essais libres et contrôles',mode==='training','data-mode-pick="training"')}`+
+       `${modeHero('🤝','AMICAL','Choix d’équipe et duel',mode==='friendly','data-mode-pick="friendly"')}`+
+       `${modeHero('🏆','CAMPAGNE','Suite de matchs',mode==='campaign','data-mode-pick="campaign"')}`+
+       `</div><div class="inlineHelp">Touchez une carte ou validez à la manette.</div>`;
+   } else {
+     const oppTeam = opponentRandom ? {name:'Aléatoire'} : countries[selectedOpponent];
+     sub.textContent='';
+     countryList.innerHTML = compactHeader(1,'Préparer le match')+
+       `<div class="setupScreen">`+
+       `<div class="duelRow">${duelCard(teamA,'Ton équipe','data-team-prev','data-team-next')}<div class="vsCoin">VS</div>${duelCard(oppTeam,opponentRandom?'Rival':'Adversaire','data-opp-prev','data-opp-next')}</div>`+
+       `<div class="segRow"><div class="segGroup"><div class="segLabel">Format</div><div class="segBtns">${segBtn('2v2',matchSize===2,'data-size="2"')}${segBtn('3v3',matchSize===3,'data-size="3"')}${segBtn('5v5',matchSize===5,'data-size="5"')}</div></div><div class="segGroup"><div class="segLabel">Joueurs</div><div class="segBtns">${segBtn('Solo',controlMode==='solo','data-control="solo"')}${segBtn('VS',controlMode==='pvp','data-control="pvp"')}${segBtn('Coop',controlMode==='coop','data-control="coop"')}</div></div></div>`+
+       `<div class="segRow"><div class="segGroup"><div class="segLabel">Adversaire</div><div class="segBtns two">${segBtn('Aléatoire',opponentRandom,'data-opp-random')}${segBtn('Choisir',!opponentRandom,'data-opp-select')}</div></div><div class="segGroup"><div class="segLabel">Résumé</div><div class="segBtns two">${segBtn(flagFor(teamA)+' '+teamA.name,false,'')}${segBtn(opponentRandom?'🎲 Surprise':flagFor(countries[selectedOpponent])+' '+countries[selectedOpponent].name,false,'')}</div></div></div>`+
+       `<div class="footerBar"><button data-menu-item data-back class="footerBtn">↩ Retour</button><button data-menu-item data-launch class="footerBtn primary">⚽ Lancer le match</button></div>`+
+       `</div>`;
+   }
+ } else {
+   if(menuPage==='mode'){
+    sub.textContent='Choisis le type de partie. Ensuite équipe, format, adversaire, et on joue.';
+    startBtn.style.display='block';startBtn.textContent='CONTINUER';
+    countryList.innerHTML=`${stepHeader(0,'Mode de jeu','Un choix simple, puis direction le terrain.')}`+
+    `<div class="simpleSteps">`+
+    `${choiceCard('🎯','ENTRAÎNEMENT','Tester contrôles, tirs, lobs et reprises.',mode==='training','data-mode-pick="training"')}`+
+    `${choiceCard('🤝','MATCH AMICAL','Choisis équipes et format.',mode==='friendly','data-mode-pick="friendly"')}`+
+    `${choiceCard('🏆','CAMPAGNE','Enchaînement d’adversaires.',mode==='campaign','data-mode-pick="campaign"')}`+
+    `</div>`;
+   }else{
+    const opp=opponentRandom?'Aléatoire':countries[selectedOpponent].name;
+    sub.textContent='Choisis ton équipe, le format et l’adversaire.';
+    startBtn.style.display='none';
+    countryList.innerHTML=`${stepHeader(1,'Préparer le match','Équipe, format et adversaire.')}`+
+    `<div class="sectionLabel">👕 TON ÉQUIPE</div><div class="simpleSelector"><button data-menu-item data-team-prev class="arrowBtn">‹</button>${teamCard(teamA,'Équipe contrôlée')}<button data-menu-item data-team-next class="arrowBtn">›</button></div>`+
+    `<div class="sectionLabel">⚽ FORMAT</div><div class="pillRow">${choiceCard('2️⃣','2 VS 2','Très direct.',matchSize===2,'data-size="2"')}${choiceCard('3️⃣','3 VS 3','Action + placements.',matchSize===3,'data-size="3"')}${choiceCard('5️⃣','5 VS 5','Le plus complet.',matchSize===5,'data-size="5"')}</div>`+
+    `<div class="sectionLabel">🎮 JOUEURS</div><div class="pillRow">${choiceCard('1️⃣','SOLO','Toi contre l’IA.',controlMode==='solo','data-control="solo"')}${choiceCard('⚔️','2 JOUEURS VS','P1 contre P2.',controlMode==='pvp','data-control="pvp"')}${choiceCard('🤝','2 JOUEURS COOP','P1 + P2 même équipe.',controlMode==='coop','data-control="coop"')}</div>`+
+    `<div class="sectionLabel">🧭 ADVERSAIRE</div><div class="pillRow two">${choiceCard('🎲','ALÉATOIRE','Rival choisi au lancement.',opponentRandom,'data-opp-random')}${choiceCard('🛡','CHOISIR',opponentRandom?'Sélection manuelle.':flagFor(countries[selectedOpponent])+' '+opp,!opponentRandom,'data-opp-select')}</div>`+
+    `<div class="simpleSelector ${opponentRandom?'navSoft':''}"><button data-menu-item data-opp-prev class="arrowBtn">‹</button>${teamCard(opponentRandom?{name:'Aléatoire'}:countries[selectedOpponent],opponentRandom?'Le tirage décide du rival.':'Adversaire sélectionné')}<button data-menu-item data-opp-next class="arrowBtn">›</button></div>`+
+    `<div class="pillRow two">${choiceCard('↩️','RETOUR','Revenir au mode.',false,'data-back')}${choiceCard('⚽','LANCER','Entrer sur le terrain.',true,'data-launch')}</div>`;
+   }
  }
  setTimeout(()=>setMenuFocus(0),0)}
 function menuActivate(el){if(!el)return;if(el.dataset.modePick){mode=el.dataset.modePick;menuPage='teams';renderMenu();return}if(el.dataset.teamPrev!==undefined){selected=(selected-1+countries.length)%countries.length;teamA=countries[selected];if(selectedOpponent===selected)selectedOpponent=(selectedOpponent+1)%countries.length;renderMenu();return}if(el.dataset.teamNext!==undefined){selected=(selected+1)%countries.length;teamA=countries[selected];if(selectedOpponent===selected)selectedOpponent=(selectedOpponent+1)%countries.length;renderMenu();return}if(el.dataset.size){matchSize=+el.dataset.size;renderMenu();return}if(el.dataset.control){controlMode=el.dataset.control;renderMenu();return}if(el.dataset.oppRandom!==undefined){opponentRandom=true;renderMenu();return}if(el.dataset.oppSelect!==undefined){opponentRandom=false;renderMenu();return}if(el.dataset.oppPrev!==undefined){opponentRandom=false;do{selectedOpponent=(selectedOpponent-1+countries.length)%countries.length}while(selectedOpponent===selected);renderMenu();return}if(el.dataset.oppNext!==undefined){opponentRandom=false;do{selectedOpponent=(selectedOpponent+1)%countries.length}while(selectedOpponent===selected);renderMenu();return}if(el.dataset.back!==undefined){menuPage='mode';renderMenu();return}if(el.dataset.launch!==undefined){requestLandscapeMode().then(()=>startGame(mode));return}}
