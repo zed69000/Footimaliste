@@ -1,0 +1,25 @@
+{
+  "game": "Footimalistz / Brutal FC",
+  "version": 1,
+  "savedAt": "default",
+  "balance": {
+    "speed": 3.12,
+    "force": 1.25,
+    "pass": 1.42,
+    "tackle": 1.2,
+    "ai": 1.18,
+    "press": 1.14,
+    "aggro": 1.18,
+    "sprint": 1.45,
+    "sprintCd": 38,
+    "sprintRec": 36,
+    "captain": 0.08,
+    "sprintTired": 0.86,
+    "entityScale": 1,
+    "goalWidth": 142,
+    "goalHeight": 24,
+    "lobSlowStrength": 0.46,
+    "lobSlowDur": 1.2,
+    "lobSlowCurve": 1.1
+  }
+}
