@@ -1035,6 +1035,24 @@ body.menuAttract #menu{
   .storyVersusGrid .playCard.albumCard{min-height:196px!important}.storyVersusGrid .albumHero{height:96px!important}.storyVersusGrid .albumName{font-size:12px!important}
 }
 
+/* --- STEP 9 : VERSION DISCRETE --- */
+#bfcVersionBadge{
+  position:fixed;
+  right:calc(env(safe-area-inset-right,0px) + 6px);
+  bottom:calc(env(safe-area-inset-bottom,0px) + 4px);
+  z-index:7;
+  pointer-events:none;
+  color:rgba(255,248,223,.32);
+  background:rgba(0,0,0,.16);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:999px;
+  padding:2px 6px;
+  font:700 8px/1 Arial,Helvetica,sans-serif;
+  letter-spacing:.4px;
+  text-transform:uppercase;
+}
+@media(max-width:820px),(max-height:560px){#bfcVersionBadge{font-size:7px;opacity:.55}}
+
 </style>
 </head>
 <body>
@@ -1080,8 +1098,13 @@ body.menuAttract #menu{
 <div id="mobileControls"><div class="stickBase dynamicStick" id="stick"><div class="stickNub" id="nub"></div></div><div class="btns" id="mobileBtns"><div class="mbtn" data-action="pass">CTRL</div><div class="mbtn" data-action="shoot">TIR</div><div class="mbtn" data-action="sprint">RUN</div><div class="mbtn" data-action="switch">SWITCH</div></div></div>
 <div id="menu" class="gameSetupOverlay menuForceHidden" style="display:none"><div id="countryList"></div></div>
 <div id="introOverlay"><div class="introCard"><div id="introStudio" class="introStudio">ZED BUG</div><div id="introSub" class="introSub">présente</div></div><div id="introSkip" class="introSkip">Appuie / touche / bouton pour skip</div></div>
+<div id="bfcVersionBadge" aria-hidden="true"></div>
 <div id="campaignOverlay" class="campaignOverlay"><div id="campaignBoard" class="campaignBoard"></div></div>
 
+<script src="src/input/inputManager.js"></script>
+<script src="src/menu/menuManager.js"></script>
+<script src="src/game/matchManager.js"></script>
+<script src="src/systems/campaignSystem.js"></script>
 <script>
 'use strict';
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');ctx.imageSmoothingEnabled=false;
@@ -1237,6 +1260,7 @@ function snapKickoffTargets(){
  if(ball){ball.pos.set(W/2,H/2);ball.vel.set(0,0);ball.z=0;ball.vz=0;ball.owner=null;}
 }
 function finishKickoffAfterWhistle(){
+ setMatchRuntimeState((window.BFC_MATCH&&BFC_MATCH.MATCH_STATES)?BFC_MATCH.MATCH_STATES.PLAYING:'playing','finishKickoffAfterWhistle');
  snapKickoffTargets();
  players.forEach(p=>{p.kickTarget=null;p.control=false;p.control2=false;p.hasBall=false;p.stun=0});
  const starter=kickoffStarter||kickoffStarterFor(kickoffKickTeam);
@@ -1279,8 +1303,8 @@ function kickoffUpdate(dt){
 }
 const TACTICS={balanced:{name:'Équilibré 2-1-2',desc:'bloc simple, solutions courtes, peu de trous',slots:[['keeper',70,0],['defender',210,-82],['defender',210,82],['mid',360,0],['striker',520,-70],['striker',520,70]]},press:{name:'Pressing 1-2-2',desc:'harcèle haut, récupère vite, mais laisse de l’espace',slots:[['keeper',70,0],['defender',210,0],['mid',350,-95],['mid',350,95],['striker',555,-70],['striker',555,70]]},counter:{name:'Contre 2-2-1',desc:'bloc bas, projection rapide vers un attaquant',slots:[['keeper',70,0],['defender',200,-90],['defender',200,90],['mid',330,-70],['mid',330,70],['striker',535,0]]},diamond:{name:'Losange 1-3-1',desc:'meneur axial, triangles et passes intérieures',slots:[['keeper',70,0],['defender',205,0],['mid',330,-95],['mid',330,95],['mid',420,0],['striker',555,0]]},lock:{name:'Verrou 3-1-1',desc:'défense dense, libéro, transitions lentes mais solides',slots:[['keeper',70,0],['defender',185,-105],['defender',185,0],['defender',185,105],['mid',350,0],['striker',535,0]]}};
 const keys={},pressed={},released={},mobileMove={x:0,y:0},gpMove={x:0,y:0},gp2Move={x:0,y:0},mobPressed={},mobReleased={},mobDown={},gpPressed={},gpReleased={},gpDown={},gpPrev={},gp2Pressed={},gp2Released={},gp2Down={},gp2Prev={};
-const XBOX_BTN={A:0,B:1,X:2,Y:3,LB:4,RB:5,LT:6,RT:7,BACK:8,START:9,DU:12,DD:13,DL:14,DR:15};
-const GP_MAP={pass:[XBOX_BTN.A],shoot:[XBOX_BTN.X],sprint:[XBOX_BTN.B],switch:[XBOX_BTN.Y,XBOX_BTN.LB],restart:[XBOX_BTN.START],back:[XBOX_BTN.B,XBOX_BTN.BACK],navUp:[XBOX_BTN.DU],navDown:[XBOX_BTN.DD],navLeft:[XBOX_BTN.DL],navRight:[XBOX_BTN.DR]};
+const XBOX_BTN=(window.BFCInput&&window.BFCInput.XBOX_BTN)||{A:0,B:1,X:2,Y:3,LB:4,RB:5,LT:6,RT:7,BACK:8,START:9,DU:12,DD:13,DL:14,DR:15};
+const GP_MAP=(window.BFCInput&&window.BFCInput.GAMEPLAY_MAP)||{pass:[XBOX_BTN.A],shoot:[XBOX_BTN.X],sprint:[XBOX_BTN.B],switch:[XBOX_BTN.Y,XBOX_BTN.LB],restart:[XBOX_BTN.START],back:[XBOX_BTN.B,XBOX_BTN.BACK],navUp:[XBOX_BTN.DU],navDown:[XBOX_BTN.DD],navLeft:[XBOX_BTN.DL],navRight:[XBOX_BTN.DR]};
 class V{constructor(x=0,y=0){this.x=x;this.y=y}clone(){return new V(this.x,this.y)}set(x,y){this.x=x;this.y=y;return this}add(v){this.x+=v.x;this.y+=v.y;return this}sub(v){this.x-=v.x;this.y-=v.y;return this}mul(s){this.x*=s;this.y*=s;return this}len(){return Math.hypot(this.x,this.y)}norm(){const l=this.len();if(l>.0001){this.x/=l;this.y/=l}return this}static dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}}
 function entityScale(){return clamp(BAL.entityScale||1,.7,1.45)}
 class Player{constructor(x,y,t,role,c,i){this.pos=new V(x,y);this.spawn=new V(x,y);this.vel=new V();this.team=t;this.role=role;this.country=c;this.i=i;this.size=28;this.r=16;this.hasBall=false;this.control=false;this.control2=false;this.stun=0;this.cd=0;const prof=profileFor(c,i);this.name=prof.name;this.skin=prof.skin;this.hairStyle=prof.hairStyle;this.hairColor=prof.hairColor;this.captain=(i===Math.min(3,Math.max(0,matchSize-1)));this.captainAura=0;this.face=new V(t===TA?1:-1,0);this.energy=1;this.intent='';this.dead=false;this.respawn=0;this.forcedTarget=null;this.sprintCd=0;this.sprintCdMax=1;this.sprintActive=0;this.sprintActiveMax=1;this.sprintHeld=0;this.sprintTriggered=false;this.tired=0;this.passBuffer=0;this.ctrlTapT=0;this.switchBuffer=0;this.slideT=0;this.slideHit=0;this.slideDir=new V(t===TA?1:-1,0);this.slideRecover=0;this.volleyHintT=0;this.volleyFxT=0;this.headerFxT=0;this.headerJumpMax=0;this.headerJumpDur=46;this.pendingAirShot=null;this.aiSprintThink=0;this.sprintTapCd=0}
@@ -2279,7 +2303,7 @@ function drawGoalReplay(){
  ctx.fillStyle='rgba(0,0,0,.50)';ctx.fillRect(W-188,18,170,28);ctx.strokeStyle='rgba(255,211,74,.50)';ctx.strokeRect(W-188,18,170,28);ctx.fillStyle='#ffd34a';ctx.font='900 11px Arial';ctx.textAlign='center';ctx.fillText('PASSE / TIR : SKIP',W-103,36);
  topUi.innerHTML=`${teamA.name} <span style="color:#ffd34a">${scoreA}</span> - <span style="color:#ffd34a">${scoreB}</span> ${mode==='training'?'TUTO':mode==='aiwatch'?'OBS IA':teamB.name} · RALENTI`;
 }
-function goal(team,hitY=H/2){if(isUiCinematicActive()){resetAttractBallAfterGoal();cleanCinematicUiNoise();return}if(goalHoldT>0||goalReplay)return;resetPassCombo('goal');const scorer=(ball.lastKicker&&ball.lastKicker.team===team?ball.lastKicker.name:(team===TA?teamA.name:teamB.name));showMatchBanner('BUT !! '+scorer);sfxGoal();team===TA?scoreA++:scoreB++;if(team===TA)netFxR={y:hitY,t:1,power:1};else netFxL={y:hitY,t:1,power:1};confettiBurst();show(team===TA?'BUUUUT ! PUBLIC EN FOLIE':'BUT ENCAISSÉ');shake=18;pendingKick=team===TA?TB:TA;goalHoldT=2.35;goalSlow=1.15;if(ball){if(ball.owner)ball.owner.hasBall=false;ball.owner=null;ball.vel.set(0,0);ball.z=0;ball.vz=0;ball.ignorePlayer=null;ball.ignoreT=0}players.forEach(p=>{p.control=false;p.control2=false;p.hasBall=false;p.kickTarget=null});const user=players.find(p=>p.team===TA&&!p.dead&&p.role==='mid')||players.find(p=>p.team===TA&&!p.dead&&p.role==='striker')||players.find(p=>p.team===TA&&!p.dead);if(user)setControl(user);goalText.textContent=(team===TA?teamA.name:teamB.name)+' marque. Remise en jeu : '+(pendingKick===TA?teamA.name:teamB.name);if(!startGoalReplay())goalPause.style.display='flex'}function inGoal(y){return Math.abs(y-H/2)<goalWidth()/2}function canScoreBall(b,scoringTeam){const headerMargin=b.headerShotT>0?6:0;if(!inGoal(b.pos.y)||b.z>=goalHeight()+headerMargin)return false;if(kickFromOwnBoxCannotScore(b,scoringTeam))return false;return true}
+function goal(team,hitY=H/2){if(isUiCinematicActive()){resetAttractBallAfterGoal();cleanCinematicUiNoise();return}if(goalHoldT>0||goalReplay)return;setMatchRuntimeState((window.BFC_MATCH&&BFC_MATCH.MATCH_STATES)?BFC_MATCH.MATCH_STATES.GOAL_PAUSE:'goal_pause','goal');resetPassCombo('goal');const scorer=(ball.lastKicker&&ball.lastKicker.team===team?ball.lastKicker.name:(team===TA?teamA.name:teamB.name));showMatchBanner('BUT !! '+scorer);sfxGoal();team===TA?scoreA++:scoreB++;if(team===TA)netFxR={y:hitY,t:1,power:1};else netFxL={y:hitY,t:1,power:1};confettiBurst();show(team===TA?'BUUUUT ! PUBLIC EN FOLIE':'BUT ENCAISSÉ');shake=18;pendingKick=team===TA?TB:TA;goalHoldT=2.35;goalSlow=1.15;if(ball){if(ball.owner)ball.owner.hasBall=false;ball.owner=null;ball.vel.set(0,0);ball.z=0;ball.vz=0;ball.ignorePlayer=null;ball.ignoreT=0}players.forEach(p=>{p.control=false;p.control2=false;p.hasBall=false;p.kickTarget=null});const user=players.find(p=>p.team===TA&&!p.dead&&p.role==='mid')||players.find(p=>p.team===TA&&!p.dead&&p.role==='striker')||players.find(p=>p.team===TA&&!p.dead);if(user)setControl(user);goalText.textContent=(team===TA?teamA.name:teamB.name)+' marque. Remise en jeu : '+(pendingKick===TA?teamA.name:teamB.name);if(!startGoalReplay())goalPause.style.display='flex'}function inGoal(y){return Math.abs(y-H/2)<goalWidth()/2}function canScoreBall(b,scoringTeam){const headerMargin=b.headerShotT>0?6:0;if(!inGoal(b.pos.y)||b.z>=goalHeight()+headerMargin)return false;if(kickFromOwnBoxCannotScore(b,scoringTeam))return false;return true}
 
 
 function isUiCinematicActive(){return (!introDone)||(menu&&menu.style.display!=='none')||(typeof campaignOverlay!=='undefined'&&campaignOverlay&&campaignOverlay.style.display!=='none');}
@@ -2499,25 +2523,10 @@ document.querySelectorAll('.mbtn').forEach(b=>{
 }
 function forceMobileButton(action,isDown){if(!action)return;const btn=document.querySelector(`.mbtn[data-action="${action}"]`);if(isDown){if(!mobDown[action])mobPressed[action]=true;mobDown[action]=true;if(btn)btn.classList.add('down')}else{if(mobDown[action])mobReleased[action]=true;mobDown[action]=false;if(btn)btn.classList.remove('down')}}
 
-function gamepadButtonDown(g,i){return !!(g&&g.buttons&&g.buttons[i]&&g.buttons[i].pressed)}
-function axisVal(g,i){return (g&&g.axes&&Number.isFinite(g.axes[i]))?g.axes[i]:0}
-function axis9Dpad(g){const a=axisVal(g,9);if(Math.abs(a)<.01)return null;const dirs=[null,{x:0,y:-1},{x:1,y:-1},{x:1,y:0},{x:1,y:1},{x:0,y:1},{x:-1,y:1},{x:-1,y:0},{x:-1,y:-1}];const idx=Math.round(((a+1)/2)*8);return dirs[clamp(idx,0,8)]||null}
-function bestGamepadMove(g){
-  let best={x:0,y:0,l:0};
-  const pairs=[[0,1],[2,3],[4,5],[6,7]];
-  for(const [ix,iy] of pairs){
-    let x=axisVal(g,ix),y=axisVal(g,iy);
-    const l=Math.hypot(x,y);
-    if(l>best.l&&l>.16)best={x,y,l};
-  }
-  const d9=axis9Dpad(g);if(d9&&best.l<.35)best={x:d9.x,y:d9.y,l:1};
-  const bx=(gamepadButtonDown(g,15)?1:0)-(gamepadButtonDown(g,14)?1:0);
-  const by=(gamepadButtonDown(g,13)?1:0)-(gamepadButtonDown(g,12)?1:0);
-  if(Math.hypot(bx,by)>.1)best={x:bx,y:by,l:1};
-  if(best.l<=.16)return {x:0,y:0};
-  const power=Math.min(1,(best.l-.16)/.84);
-  return {x:best.x/best.l*power,y:best.y/best.l*power};
-}
+function gamepadButtonDown(g,i){return window.BFCInput?BFCInput.buttonDown(g,i):!!(g&&g.buttons&&g.buttons[i]&&g.buttons[i].pressed)}
+function axisVal(g,i){return window.BFCInput?BFCInput.axis(g,i):((g&&g.axes&&Number.isFinite(g.axes[i]))?g.axes[i]:0)}
+function axis9Dpad(g){return window.BFCInput?BFCInput.axis9Dpad(g):(function(){const a=axisVal(g,9);if(Math.abs(a)<.01)return null;const dirs=[null,{x:0,y:-1},{x:1,y:-1},{x:1,y:0},{x:1,y:1},{x:0,y:1},{x:-1,y:1},{x:-1,y:0},{x:-1,y:-1}];const idx=Math.round(((a+1)/2)*8);return dirs[clamp(idx,0,8)]||null})()}
+function bestGamepadMove(g){return window.BFCInput?BFCInput.bestMove(g,{deadZone:.16,normalizePower:true}):{x:0,y:0}}
 function pollGamepad(){
  gpMove.x=0;gpMove.y=0;gp2Move.x=0;gp2Move.y=0;
  for(const k in gpPressed)delete gpPressed[k];for(const k in gpReleased)delete gpReleased[k];
@@ -2556,29 +2565,8 @@ function pollGamepad(){
 // --- MENU INPUT STABILISÉ : console + mobile ---
 const uiPad={move:{x:0,y:0},confirm:false,back:false,confirmDown:false,backDown:false,any:false};
 let uiPadPrevConfirm=false,uiPadPrevBack=false;
-function axis9UiDir(g){
-  const a=axisVal(g,9);
-  if(Math.abs(a)<.01)return null;
-  const dirs=[null,{x:0,y:-1},{x:1,y:-1},{x:1,y:0},{x:1,y:1},{x:0,y:1},{x:-1,y:1},{x:-1,y:0},{x:-1,y:-1}];
-  const idx=Math.round(((a+1)/2)*8);
-  return dirs[clamp(idx,0,8)]||null;
-}
-function uiGamepadMove(g){
-  let best={x:0,y:0,l:0};
-  const pairs=[[0,1],[2,3],[4,5],[6,7]];
-  for(const [ix,iy] of pairs){
-    const x=axisVal(g,ix),y=axisVal(g,iy),l=Math.hypot(x,y);
-    if(l>best.l&&l>.18)best={x,y,l};
-  }
-  const d9=axis9UiDir(g);
-  if(d9&&best.l<.38)best={x:d9.x,y:d9.y,l:1};
-  const bx=(gamepadButtonDown(g,15)?1:0)-(gamepadButtonDown(g,14)?1:0);
-  const by=(gamepadButtonDown(g,13)?1:0)-(gamepadButtonDown(g,12)?1:0);
-  if(Math.hypot(bx,by)>.1)best={x:bx,y:by,l:1};
-  if(best.l<=.18)return {x:0,y:0};
-  const n=Math.max(1,best.l);
-  return {x:best.x/n,y:best.y/n};
-}
+function axis9UiDir(g){return window.BFCInput?BFCInput.axis9Dpad(g):axis9Dpad(g)}
+function uiGamepadMove(g){return window.BFCInput?BFCInput.bestMove(g,{deadZone:.18,normalizePower:false}):bestGamepadMove(g)}
 function pollUiPadInput(){
   uiPad.move.x=0;uiPad.move.y=0;uiPad.confirm=false;uiPad.back=false;uiPad.any=false;
   const pads=navigator.getGamepads?navigator.getGamepads():[];
@@ -2704,9 +2692,12 @@ function clamp(v,a,b){return Math.max(a,Math.min(b,v))}function rand(a,b){return
 // Menu volontairement minimal : le jeu est visible derrière, la fenêtre ne sert qu'au setup de début.
 const campaignOverlay=document.getElementById('campaignOverlay');
 const campaignBoard=document.getElementById('campaignBoard');
-const FLOW_PAGES={MAIN:'main',TEAM:'team',OPPONENT:'opponent',OPTIONS:'options',BEGIN:'begin'};
-const FLOW_STEPS={main:'MENU',team:'SELECT TEAM',opponent:'SELECT ADVERSAIRE',options:'OPTION',begin:'GAME BEGIN'};
-const menuState={page:FLOW_PAGES.MAIN,mode:'friendly',teamA:selected,teamB:selectedOpponent||3,size:matchSize||5,busy:false,plan:'balanced'};
+const BFC_MENU=window.BFCMenuManager||null;
+const BFC_CAMPAIGN=window.BFCCampaignSystem||null;
+const FLOW_PAGES=(BFC_MENU&&BFC_MENU.PAGES)||{MAIN:'main',TEAM:'team',OPPONENT:'opponent',OPTIONS:'options',BEGIN:'begin'};
+const FLOW_STEPS=(BFC_MENU&&BFC_MENU.STEPS)||{main:'MENU',team:'SELECT TEAM',opponent:'SELECT ADVERSAIRE',options:'OPTION',begin:'GAME BEGIN'};
+const menuState=(BFC_MENU&&BFC_MENU.createState)?BFC_MENU.createState({page:FLOW_PAGES.MAIN,mode:'friendly',teamA:selected,teamB:selectedOpponent||3,size:matchSize||5,plan:'balanced',countries}):{page:FLOW_PAGES.MAIN,mode:'friendly',teamA:selected,teamB:selectedOpponent||3,size:matchSize||5,busy:false,plan:'balanced'};
+if(BFC_MENU&&BFC_MENU.syncVersionBadge)BFC_MENU.syncVersionBadge();
 function bfcUpdateViewportVars(){
   const root=document.documentElement;
   const vv=window.visualViewport;
@@ -2733,6 +2724,7 @@ function closeFlowOverlays(opts={}){
   goalReplay=null; goalHoldT=0; pendingKick=null;
 }
 function showMenuOverlay(){
+  setMatchRuntimeState((window.BFC_MATCH&&BFC_MATCH.MATCH_STATES)?BFC_MATCH.MATCH_STATES.MENU:'menu','showMenuOverlay');
   if(!menu)return;
   if(typeof bfcUpdateViewportVars==='function')bfcUpdateViewportVars();
   closeFlowOverlays({keepMenu:true,keepIntro:true});
@@ -2752,18 +2744,26 @@ function isMenuOverlayOpen(){
   return !!(menu && !menu.classList.contains('menuForceHidden') && menu.style.display!=='none');
 }
 
+let matchRuntimeState=(window.BFC_MATCH&&BFC_MATCH.createMatchState)?BFC_MATCH.createMatchState():{state:'menu',mode:'friendly'};
+function setMatchRuntimeState(state,reason){if(window.BFC_MATCH&&BFC_MATCH.setState)BFC_MATCH.setState(matchRuntimeState,state,reason);else matchRuntimeState.state=state;}
+if(window.BFC_MATCH&&BFC_MATCH.setVersionBadge)BFC_MATCH.setVersionBadge();
+if(BFC_CAMPAIGN&&BFC_CAMPAIGN.setVersionBadge)BFC_CAMPAIGN.setVersionBadge();
 let campaignOpponents=[];
 let campaignBoardMode='pre';
-const CAMPAIGN_SEEDS=[18,17,16,14,3,24,20,21,22,13];
+let campaignState=(BFC_CAMPAIGN&&BFC_CAMPAIGN.createState)?BFC_CAMPAIGN.createState({teamId:selected,step:campaignStep,opponents:[]}):null;
+const CAMPAIGN_SEEDS=(BFC_CAMPAIGN&&BFC_CAMPAIGN.CAMPAIGN_SEEDS)||[18,17,16,14,3,24,20,21,22,13];
 const AI_PLANS={balanced:{name:'Équilibré',tag:'bloc simple'},press:{name:'Pressing',tag:'attaque la relance'},counter:{name:'Contre',tag:'bloc bas rapide'},possession:{name:'Possession',tag:'passes courtes'},brutal:{name:'Brutal',tag:'tacles / chaos'}};
 function simpleTeamName(i){return countries[i].name}
 function teamStatLine(c){return `⚡${c.speed.toFixed(2)} · 💥${c.power.toFixed(2)} · 🎯${c.pass.toFixed(2)} · 🛡${c.tackle.toFixed(2)}`}
 function flowRouteHtml(active){const arr=[['main','Menu'],['team','Team'],['opponent','Adversaire'],['begin','Game Begin']];return `<div class="flowRoute">${arr.map(([id,label])=>`<span class="${id===active?'active':''}">${label}</span>`).join('')}</div>`}
 function flowTeamCard(id,label='Équipe'){const c=countries[id];return `<div class="flowTeamCard" style="--kit:${c.color};--stripe:${c.stripe}"><div class="flowFlag">${flagFor(c)}</div><div><div class="flowTeamMeta">${label}</div><div class="flowTeamName">${c.name}</div><div class="flowStats"><span>⚡ ${c.speed.toFixed(2)}</span><span>💥 ${c.power.toFixed(2)}</span><span>🎯 ${c.pass.toFixed(2)}</span><span>🛡 ${c.tackle.toFixed(2)}</span><span>🧠 ${c.ai.toFixed(2)}</span></div></div></div>`}
 function modeLabel(m){return m==='training'?'TRAINING':m==='campaign'?'CAMPAGNE':m==='aiwatch'?'OBS IA':m==='options'?'OPTION':'AMICAL'}
-function buildCampaignOpponents(myId){const seen=new Set([myId]);const out=[];for(const id of CAMPAIGN_SEEDS){if(!seen.has(id)&&countries[id]){out.push(id);seen.add(id)}}for(const c of countries){if(out.length>=5)break;if(!seen.has(c.id)){out.push(c.id);seen.add(c.id)}}return out.slice(0,5)}
+function buildCampaignOpponents(myId){
+  if(BFC_CAMPAIGN&&BFC_CAMPAIGN.buildOpponents)return BFC_CAMPAIGN.buildOpponents(myId,countries,5);
+  const seen=new Set([myId]);const out=[];for(const id of CAMPAIGN_SEEDS){if(!seen.has(id)&&countries[id]){out.push(id);seen.add(id)}}for(const c of countries){if(out.length>=5)break;if(!seen.has(c.id)){out.push(c.id);seen.add(c.id)}}return out.slice(0,5)
+}
 function nextOpponentForMenu(){return menuState.mode==='campaign'?buildCampaignOpponents(menuState.teamA)[0]:menuState.teamB}
-function nextDifferentTeam(id,dir){let n=id;let guard=0;do{n=(n+dir+countries.length)%countries.length;guard++}while(n===menuState.teamA&&guard<countries.length+1);return n}
+function nextDifferentTeam(id,dir){if(BFC_MENU&&BFC_MENU.nextDifferentTeam)return BFC_MENU.nextDifferentTeam(id,dir,menuState.teamA,countries.length);let n=id;let guard=0;do{n=(n+dir+countries.length)%countries.length;guard++}while(n===menuState.teamA&&guard<countries.length+1);return n}
 function renderMenu(){
   menu.classList.add('gameSetupOverlay');
   document.body.classList.add('menuAttract');
@@ -2902,14 +2902,27 @@ function endMenuNavFrame(){if(endOverlay.style.display==='none')return;const ite
 function setupCampaignRun(){
   selected=menuState.teamA;
   campaignStep=0;
-  campaignOpponents=buildCampaignOpponents(selected);
-  selectedOpponent=campaignOpponents[0];
+  if(BFC_CAMPAIGN&&BFC_CAMPAIGN.reset){
+    campaignState=BFC_CAMPAIGN.reset(campaignState,selected,countries,5);
+    campaignOpponents=campaignState.opponents.slice();
+  }else{
+    campaignOpponents=buildCampaignOpponents(selected);
+  }
+  selectedOpponent=campaignOpponentId();
   menuState.teamB=selectedOpponent;
   teamA=countries[selected];
-  if(mode==='campaign'&&campaignOpponents&&campaignOpponents.length)selectedOpponent=campaignOpponentId();
   teamB=countries[selectedOpponent];
 }
 function campaignOpponentId(){
+  if(BFC_CAMPAIGN&&BFC_CAMPAIGN.currentOpponent){
+    if(!campaignState)campaignState=BFC_CAMPAIGN.createState({teamId:selected,step:campaignStep,opponents:campaignOpponents});
+    campaignState.teamId=selected;
+    campaignState.step=campaignStep;
+    campaignState.opponents=(campaignOpponents&&campaignOpponents.length)?campaignOpponents.slice():campaignState.opponents;
+    const id=BFC_CAMPAIGN.currentOpponent(campaignState,countries);
+    campaignOpponents=campaignState.opponents.slice();
+    return id;
+  }
   if(!campaignOpponents||!campaignOpponents.length)campaignOpponents=buildCampaignOpponents(selected);
   return campaignOpponents[clamp(campaignStep,0,campaignOpponents.length-1)];
 }
@@ -2925,6 +2938,7 @@ function renderCampaignBoard(state='pre'){
   campaignBoard.innerHTML=`<div class="campHead"><div><div class="campKicker">BRUTAL FC · CAMPAGNE</div><div class="campTitle">${title}</div><div class="campSub">${sub}</div></div><div class="campScoreBox">${done?'CHAMPION':`MATCH ${campaignStep+1}/${campaignOpponents.length}`}<small>${done?'Tableau nettoyé':`${flagFor(teamA)} ${teamA.name} vs ${flagFor(nextTeam)} ${nextTeam.name}`}</small></div></div><div class="campGrid">${slots.join('')}</div><div class="campFooter"><div class="campNote">Le tableau revient après chaque victoire pour annoncer le prochain combat.</div><button data-campaign-menu class="campBtn">MENU</button>${done?'<button data-campaign-menu class="campBtn gold">RETOUR AU MENU</button>':`<button data-campaign-play class="campBtn primary">${state==='post'?'MATCH SUIVANT':'COMMENCER LE MATCH'}</button>`}</div>`;
 }
 function showCampaignBoard(state='pre'){
+  setMatchRuntimeState((window.BFC_MATCH&&BFC_MATCH.MATCH_STATES)?BFC_MATCH.MATCH_STATES.CAMPAIGN_BOARD:'campaign_board','showCampaignBoard');
   if(!campaignOverlay)return;
   try{requestLandscapeMode().catch(()=>{})}catch(_){ }
   closeFlowOverlays({keepCampaign:true,keepIntro:true});
@@ -2967,7 +2981,14 @@ function startCampaignMatch(){
   });
 }
 function campaignWinFlow(){
-  campaignStep++;
+  if(BFC_CAMPAIGN&&BFC_CAMPAIGN.advance){
+    if(!campaignState)campaignState=BFC_CAMPAIGN.createState({teamId:selected,step:campaignStep,opponents:campaignOpponents});
+    campaignState.step=campaignStep;
+    campaignState.opponents=(campaignOpponents&&campaignOpponents.length)?campaignOpponents.slice():campaignState.opponents;
+    BFC_CAMPAIGN.advance(campaignState);
+    campaignStep=campaignState.step;
+    campaignOpponents=campaignState.opponents.slice();
+  }else campaignStep++;
   if(campaignStep>=campaignOpponents.length){gameOver=true;hudBtns.style.display='none';confettiBurst();for(let i=0;i<5;i++)fireworkBurst(rand(120,W-120),rand(80,260));showCampaignBoard('post');return true}
   selectedOpponent=campaignOpponentId();
   menuState.teamB=selectedOpponent;
@@ -3008,9 +3029,11 @@ countryList.addEventListener('click',e=>{const el=e.target.closest('[data-menu-i
 introOverlay&&introOverlay.addEventListener('pointerup',e=>{e.preventDefault();skipIntro()});
 campaignOverlay&&campaignOverlay.addEventListener('pointerup',e=>{const play=e.target.closest('[data-campaign-play]'),menuBtn=e.target.closest('[data-campaign-menu]');if(!play&&!menuBtn)return;e.preventDefault();if(play)startCampaignMatch();else{hideCampaignBoard();campaignOverlay.style.display='none';showMenuOverlay();hudBtns.style.display='none';renderMenu();}});
 addEventListener('keydown',e=>{if(!introDone)skipIntro()});
-function openPause(){if(menu.style.display!=='none'||gameOver)return;gamePaused=true;pauseOverlay.style.display='flex';setTimeout(()=>setOverlayFocus('pause',0),0)}
-function closePause(){gamePaused=false;pauseOverlay.style.display='none';debugPanel.classList.remove('open')}
+function openPause(){if(menu.style.display!=='none'||gameOver)return;setMatchRuntimeState((window.BFC_MATCH&&BFC_MATCH.MATCH_STATES)?BFC_MATCH.MATCH_STATES.PAUSED:'paused','openPause');gamePaused=true;pauseOverlay.style.display='flex';setTimeout(()=>setOverlayFocus('pause',0),0)}
+function closePause(){setMatchRuntimeState((window.BFC_MATCH&&BFC_MATCH.MATCH_STATES)?BFC_MATCH.MATCH_STATES.PLAYING:'playing','closePause');gamePaused=false;pauseOverlay.style.display='none';debugPanel.classList.remove('open')}
 function startGame(m){
+  setMatchRuntimeState((window.BFC_MATCH&&BFC_MATCH.MATCH_STATES)?BFC_MATCH.MATCH_STATES.PRE_MATCH:'pre_match','startGame');
+  matchRuntimeState.mode=m;
   stopMenuMusic();
   resumeAudio();
   try{requestLandscapeMode().catch(()=>{})}catch(_){ }
@@ -3055,6 +3078,7 @@ function preMatchEntranceUpdate(dt){
   if(ball){ball.pos.set(W/2,H/2);ball.vel.set(0,0);ball.z=0;ball.vz=0;ball.owner=null}
 }
 function launchKickoffWhistle(kick=TA){
+  setMatchRuntimeState((window.BFC_MATCH&&BFC_MATCH.MATCH_STATES)?BFC_MATCH.MATCH_STATES.KICKOFF:'kickoff','launchKickoffWhistle');
   snapKickoffTargets();
   players.forEach(p=>{p.control=false;p.control2=false;p.hasBall=false});
   kickoffKickTeam=kick;
@@ -3065,6 +3089,7 @@ function launchKickoffWhistle(kick=TA){
 
 
 function showEnd(){
+ setMatchRuntimeState((window.BFC_MATCH&&BFC_MATCH.MATCH_STATES)?BFC_MATCH.MATCH_STATES.FINISHED:'finished','showEnd');
  winShown=true;
  if(mode==='campaign'){
   if(scoreA>scoreB){campaignWinFlow();return}
@@ -3089,7 +3114,7 @@ debugPanel.addEventListener('pointerup',e=>e.stopPropagation());
 pauseMenuBtn.onclick=()=>{gamePaused=false;showMenuOverlay();renderMenu()};
 restartBtn.onclick=()=>launchFromSetup();
 backMenuBtn.onclick=()=>{showMenuOverlay();renderMenu()};
-window.bfcPadDiag=function(){const pads=navigator.getGamepads?navigator.getGamepads():[];return [...pads].filter(Boolean).map(p=>({id:p.id,index:p.index,connected:p.connected,axes:[...p.axes],buttons:p.buttons.map((b,i)=>b.pressed?i:null).filter(x=>x!==null),gameMove:bestGamepadMove(p),uiMove:uiGamepadMove(p),uiConfirmA:gamepadButtonDown(p,XBOX_BTN.A),uiConfirmStart:gamepadButtonDown(p,XBOX_BTN.START)||gamepadButtonDown(p,10),uiBackB:gamepadButtonDown(p,XBOX_BTN.B),uiBackSelect:gamepadButtonDown(p,XBOX_BTN.BACK),gameplayPassA:gamepadButtonDown(p,XBOX_BTN.A),gameplayShootX:gamepadButtonDown(p,XBOX_BTN.X),rbIsUnusedForShoot:gamepadButtonDown(p,XBOX_BTN.RB)}))};
+window.bfcPadDiag=function(){const pads=navigator.getGamepads?navigator.getGamepads():[];return [...pads].filter(Boolean).map(p=>({inputModule:window.BFCInput&&BFCInput.version,id:p.id,index:p.index,connected:p.connected,axes:[...p.axes],buttons:p.buttons.map((b,i)=>b.pressed?i:null).filter(x=>x!==null),gameMove:bestGamepadMove(p),uiMove:uiGamepadMove(p),uiConfirmA:gamepadButtonDown(p,XBOX_BTN.A),uiConfirmStart:gamepadButtonDown(p,XBOX_BTN.START)||gamepadButtonDown(p,10),uiBackB:gamepadButtonDown(p,XBOX_BTN.B),uiBackSelect:gamepadButtonDown(p,XBOX_BTN.BACK),gameplayPassA:gamepadButtonDown(p,XBOX_BTN.A),gameplayShootX:gamepadButtonDown(p,XBOX_BTN.X),rbIsUnusedForShoot:gamepadButtonDown(p,XBOX_BTN.RB)}))};
 initDebug();
 syncGoalDebug();
 initAttractMatch();
