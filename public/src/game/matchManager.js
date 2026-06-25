@@ -13,7 +13,7 @@
     AI_WATCH: 'ai_watch'
   });
 
-  const VERSION = 'v0.9.11-step11';
+  const VERSION = 'v0.9.12-step12';
 
   function createMatchState(initial){
     return Object.assign({

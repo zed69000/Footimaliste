@@ -1035,6 +1035,69 @@ body.menuAttract #menu{
   .storyVersusGrid .playCard.albumCard{min-height:196px!important}.storyVersusGrid .albumHero{height:96px!important}.storyVersusGrid .albumName{font-size:12px!important}
 }
 
+
+
+/* STEP 16 - CARTES : PERSONNAGES RECALÉS SUR LA DA INGAME */
+.playCard.albumCard.daCard{
+  --px:#111;
+  background:
+    linear-gradient(145deg,rgba(255,248,218,.98),rgba(236,218,166,.92) 30%,rgba(255,255,255,.72) 31%,transparent 31%),
+    linear-gradient(150deg,color-mix(in srgb,var(--kit) 84%,#fff 16%),color-mix(in srgb,var(--stripe) 68%,#000 32%))!important;
+}
+.playCard.albumCard.daCard.isGold{
+  border-color:#ffe27a!important;
+  box-shadow:0 14px 0 rgba(0,0,0,.38),0 30px 70px rgba(0,0,0,.46),inset 0 0 0 3px rgba(116,73,0,.34),0 0 22px rgba(255,211,74,.22)!important;
+}
+.albumHero.daHero{
+  height:198px!important;
+  background:
+    radial-gradient(circle at 72% 26%,rgba(255,255,255,.30),transparent 18%),
+    linear-gradient(180deg,color-mix(in srgb,var(--kit) 78%,#fff 22%),color-mix(in srgb,var(--kit) 50%,#06120b 50%))!important;
+}
+.daPitchLines{position:absolute;inset:16px;border:3px solid rgba(255,255,255,.25);border-left:0;border-right:0;opacity:.7}
+.daPitchLines::before{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:3px;background:rgba(255,255,255,.22)}
+.daPitchLines::after{content:"";position:absolute;left:50%;top:50%;width:54px;height:54px;border-radius:50%;border:3px solid rgba(255,255,255,.18);transform:translate(-50%,-50%)}
+.daActionTrail{position:absolute;left:12%;right:14%;top:46%;height:18px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.54),transparent);transform:rotate(-16deg);opacity:.58;filter:blur(.5px)}
+.action-shoot .daActionTrail{height:24px;background:linear-gradient(90deg,transparent,rgba(255,225,74,.72),rgba(255,80,40,.62),transparent);opacity:.74}
+.action-tackle .daActionTrail{top:58%;transform:rotate(7deg);background:linear-gradient(90deg,transparent,rgba(210,240,255,.54),transparent)}
+.action-pass .daActionTrail{top:40%;transform:rotate(-6deg)}
+.daBall{z-index:7!important;right:15%!important;top:25%!important}
+.action-shoot .daBall{right:9%!important;top:20%!important;width:32px!important;height:32px!important}
+.action-tackle .daBall{right:18%!important;top:58%!important}
+.daPixelPlayer{position:absolute;z-index:6;left:50%;bottom:4px;width:118px;height:152px;transform:translateX(-50%) rotate(var(--pose));filter:drop-shadow(9px 12px 0 rgba(0,0,0,.30))}
+.da-shadow{position:absolute;left:17px;right:17px;bottom:-4px;height:13px;border-radius:50%;background:rgba(0,0,0,.28)}
+.da-head{position:absolute;left:31px;top:4px;width:56px;height:56px;background:var(--skin);border:5px solid var(--px);box-shadow:0 5px 0 rgba(0,0,0,.20)}
+.da-hair{position:absolute;left:27px;top:-2px;width:64px;height:19px;background:var(--hair);border:5px solid var(--px);border-bottom:0}
+.da-eye{position:absolute;top:20px;width:7px;height:17px;background:var(--px)}.da-eye.l{left:15px}.da-eye.r{right:15px}
+.da-beard{display:none;position:absolute;left:14px;right:14px;bottom:4px;height:12px;background:var(--hair)}
+.da-body{position:absolute;left:20px;top:59px;width:78px;height:62px;background:var(--kit);border:5px solid var(--px);box-shadow:0 5px 0 rgba(0,0,0,.20)}
+.da-stripe{position:absolute;left:0;right:0;bottom:10px;height:15px;background:var(--stripe);border-top:3px solid rgba(0,0,0,.25)}
+.da-captain{position:absolute;right:4px;top:5px;width:17px;height:21px;display:grid;place-items:center;background:#ffd34a;color:#111;font-size:10px;font-weight:1000;border:2px solid #111}
+.da-captain:empty{display:none}
+.da-arm{position:absolute;top:64px;width:24px;height:47px;background:var(--skin);border:5px solid var(--px)}
+.da-arm.l{left:0;transform:rotate(30deg)}.da-arm.r{right:0;transform:rotate(-32deg)}
+.da-leg{position:absolute;top:116px;width:27px;height:38px;background:var(--kit);border:5px solid var(--px)}
+.da-leg.l{left:25px;transform:rotate(12deg)}.da-leg.r{right:25px;transform:rotate(-14deg)}
+.daPixelPlayer.hair-flat .da-hair{top:-5px;height:17px;width:70px;left:24px}
+.daPixelPlayer.hair-curly .da-hair{height:16px;background:transparent;border:0;box-shadow:0 0 0 0 transparent}
+.daPixelPlayer.hair-curly .da-hair::before{content:"";position:absolute;left:0;top:0;width:17px;height:17px;background:var(--hair);border:4px solid #111;box-shadow:14px -3px 0 -1px var(--hair),28px 0 0 -1px var(--hair),42px -2px 0 -1px var(--hair),56px 1px 0 -1px var(--hair)}
+.daPixelPlayer.hair-mohawk .da-hair{left:50px;top:-8px;width:20px;height:34px}
+.daPixelPlayer.hair-shaved .da-hair{height:10px;top:3px;opacity:.55}
+.daPixelPlayer.hair-long .da-hair{height:20px}.daPixelPlayer.hair-long .da-hair::after{content:"";position:absolute;left:-6px;right:-6px;top:14px;height:31px;background:var(--hair);border:5px solid #111;border-top:0}
+.daPixelPlayer.hair-band .da-hair{background:#fff}.daPixelPlayer.hair-band .da-hair::after{content:"";position:absolute;left:0;right:0;bottom:-5px;height:6px;background:var(--hair)}
+.daPixelPlayer.hair-beard .da-beard{display:block}
+.crop-close .daPixelPlayer{width:142px;height:168px;bottom:-31px;transform:translateX(-50%) scale(1.28) rotate(var(--pose))}
+.crop-close .da-body{top:60px}.crop-close .da-leg{display:none}.crop-close .da-arm{top:66px}
+.crop-close .daBall{top:12%!important;right:8%!important}
+.action-tackle .daPixelPlayer{bottom:-8px;transform:translateX(-50%) rotate(calc(var(--pose) - 16deg)) scaleX(1.05)}
+.action-tackle .da-body{transform:skewX(-4deg)}
+.action-run .da-arm.l{transform:rotate(-18deg)}.action-run .da-arm.r{transform:rotate(34deg)}.action-run .da-leg.l{transform:rotate(-20deg)}.action-run .da-leg.r{transform:rotate(26deg)}
+.action-shoot .da-arm.l{transform:rotate(48deg)}.action-shoot .da-leg.l{transform:rotate(-30deg)}.action-shoot .da-leg.r{transform:rotate(32deg)}
+.storyVersusGrid .daCard .daPixelPlayer{transform:translateX(-50%) scale(.84) rotate(var(--pose));bottom:-10px}.storyVersusGrid .daCard.crop-close .daPixelPlayer{transform:translateX(-50%) scale(1.02) rotate(var(--pose));bottom:-28px}
+@media(max-width:820px),(max-height:560px){
+  .albumHero.daHero{height:106px!important}.daPitchLines{inset:9px;border-width:2px}.daPitchLines::before{width:2px}.daPitchLines::after{width:34px;height:34px;border-width:2px}.daActionTrail{height:10px}.daPixelPlayer{width:72px;height:94px;bottom:0}.da-head{left:19px;top:2px;width:34px;height:34px;border-width:3px}.da-hair{left:16px;top:-2px;width:40px;height:12px;border-width:3px}.da-eye{top:11px;width:4px;height:10px}.da-eye.l{left:9px}.da-eye.r{right:9px}.da-body{left:12px;top:35px;width:48px;height:38px;border-width:3px}.da-stripe{bottom:6px;height:9px;border-top-width:2px}.da-captain{width:12px;height:14px;font-size:7px;border-width:1px}.da-arm{top:38px;width:15px;height:29px;border-width:3px}.da-leg{top:71px;width:17px;height:24px;border-width:3px}.da-leg.l{left:15px}.da-leg.r{right:15px}.crop-close .daPixelPlayer{transform:translateX(-50%) scale(1.20) rotate(var(--pose));bottom:-21px}.daBall{width:17px!important;height:17px!important;border-width:3px!important}.action-shoot .daBall{width:20px!important;height:20px!important}.storyVersusGrid .daCard .daPixelPlayer{transform:translateX(-50%) scale(.70) rotate(var(--pose));bottom:-9px}
+}
+
 /* --- STEP 9 : VERSION DISCRETE --- */
 #bfcVersionBadge{
   position:fixed;
@@ -1052,6 +1115,328 @@ body.menuAttract #menu{
   text-transform:uppercase;
 }
 @media(max-width:820px),(max-height:560px){#bfcVersionBadge{font-size:7px;opacity:.55}}
+
+
+
+/* === STEP 14 - MOBILE INGAME CONTROLS LAYOUT FIX ===
+   Correction ciblée : les boutons tactiles ingame ne doivent plus hériter
+   de positions sauvegardées ou de règles menu. Layout fixe, compact, safe-area. */
+#mobileControls{
+  pointer-events:none!important;
+  overflow:hidden!important;
+}
+#mobileControls .btns{
+  position:absolute!important;
+  left:auto!important;
+  top:auto!important;
+  right:calc(env(safe-area-inset-right,0px) + 12px)!important;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 18px)!important;
+  display:grid!important;
+  grid-template-columns:repeat(2,60px)!important;
+  grid-auto-rows:60px!important;
+  gap:9px!important;
+  width:auto!important;
+  height:auto!important;
+  transform:none!important;
+  z-index:80!important;
+  pointer-events:auto!important;
+  touch-action:none!important;
+}
+#mobileControls .mbtn{
+  width:60px!important;
+  height:60px!important;
+  min-width:60px!important;
+  min-height:60px!important;
+  border-radius:15px!important;
+  font-size:9px!important;
+  line-height:1!important;
+  display:grid!important;
+  place-items:center!important;
+}
+#mobileControls .stickBase{
+  position:absolute!important;
+  left:calc(env(safe-area-inset-left,0px) + 18px)!important;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 24px)!important;
+  top:auto!important;
+  right:auto!important;
+  width:126px!important;
+  height:126px!important;
+  transform:none!important;
+  z-index:70!important;
+}
+#mobileControls .stickNub{
+  left:39px!important;
+  top:39px!important;
+  width:48px!important;
+  height:48px!important;
+}
+@media (orientation:landscape) and (max-height:430px){
+  #mobileControls .btns{
+    grid-template-columns:repeat(2,54px)!important;
+    grid-auto-rows:54px!important;
+    gap:7px!important;
+    right:calc(env(safe-area-inset-right,0px) + 9px)!important;
+    bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important;
+  }
+  #mobileControls .mbtn{width:54px!important;height:54px!important;min-width:54px!important;min-height:54px!important;font-size:8px!important;}
+  #mobileControls .stickBase{width:112px!important;height:112px!important;left:calc(env(safe-area-inset-left,0px) + 12px)!important;bottom:calc(env(safe-area-inset-bottom,0px) + 14px)!important;}
+  #mobileControls .stickNub{left:34px!important;top:34px!important;width:44px!important;height:44px!important;}
+}
+@media (orientation:portrait) and (max-width:900px){
+  #mobileControls .btns{
+    right:calc(env(safe-area-inset-right,0px) + 10px)!important;
+    bottom:calc(env(safe-area-inset-bottom,0px) + 14px)!important;
+  }
+}
+
+
+
+/* === STEP 15 - MOBILE MENU READABILITY COMPACT PASS ===
+   Correction ciblée : menus plus petits, plus lisibles et contenus sur mobile.
+   Ne change pas le gameplay, les inputs, le flow, l'IA ou les FX. */
+@media (hover:none), (pointer:coarse), (max-width:820px), (max-height:560px){
+  #menu.gameSetupOverlay.menuForceVisible{
+    padding:4px!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .sbShell.storyFlow{
+    width:min(620px,calc(var(--bfc-vw-px) - 10px))!important;
+    max-width:calc(var(--bfc-vw-px) - 10px)!important;
+    max-height:calc(var(--bfc-vh-px) - 10px)!important;
+    padding:6px!important;
+    border-radius:14px!important;
+    gap:4px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyHead{
+    margin:0 0 4px!important;
+    min-height:0!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyKicker,
+  #menu.gameSetupOverlay.menuForceVisible .storySub,
+  #menu.gameSetupOverlay.menuForceVisible .storyHint{
+    display:none!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyLogo{
+    font-size:clamp(20px,7dvh,30px)!important;
+    line-height:.82!important;
+    letter-spacing:-.5px!important;
+    margin:0!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyScreenTitle{
+    margin:0 0 4px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyScreenTitle .top{
+    font-size:8px!important;
+    letter-spacing:1px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyScreenTitle .big{
+    font-size:clamp(20px,7dvh,32px)!important;
+    line-height:.82!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyMenuList{
+    gap:4px!important;
+    max-width:420px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyMenuBtn{
+    min-height:31px!important;
+    border-radius:9px!important;
+    padding:4px 7px!important;
+    gap:7px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyMenuBtn .ico{
+    font-size:15px!important;
+    width:18px!important;
+    text-align:center!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyMenuBtn b{
+    font-size:11px!important;
+    line-height:1!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyMenuBtn small{
+    display:none!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyCardPicker{
+    grid-template-columns:32px minmax(0,1fr) 32px!important;
+    gap:4px!important;
+    align-items:center!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyArrow{
+    height:78px!important;
+    min-height:78px!important;
+    border-radius:10px!important;
+    font-size:25px!important;
+    box-shadow:0 4px 0 rgba(0,0,0,.24)!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .playCard.albumCard,
+  #menu.gameSetupOverlay.menuForceVisible .playCard{
+    min-height:164px!important;
+    max-height:calc(var(--bfc-vh-px) - 96px)!important;
+    border-radius:13px!important;
+    padding:5px!important;
+    border-width:2px!important;
+    box-shadow:0 6px 0 rgba(0,0,0,.30),0 14px 34px rgba(0,0,0,.36)!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .playCard.albumCard::before,
+  #menu.gameSetupOverlay.menuForceVisible .playCard::before{
+    inset:5px!important;
+    border-radius:9px!important;
+    border-width:1px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .playCard.albumCard::after,
+  #menu.gameSetupOverlay.menuForceVisible .playCard::after{
+    height:14px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumSeries{
+    left:7px!important;
+    top:7px!important;
+    width:23px!important;
+    height:28px!important;
+    font-size:12px!important;
+    border-width:2px!important;
+    border-radius:6px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumFlag{
+    right:7px!important;
+    top:7px!important;
+    width:29px!important;
+    height:23px!important;
+    font-size:14px!important;
+    border-width:2px!important;
+    border-radius:6px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumHero{
+    height:84px!important;
+    margin:9px 3px 0!important;
+    border-radius:10px!important;
+    border-width:2px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumHero::after{
+    height:9px!important;
+    opacity:.62!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumPlayerBig{
+    width:60px!important;
+    height:78px!important;
+    bottom:0!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumPlayerBig .head{
+    left:15px!important;width:30px!important;height:30px!important;border-width:2px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumPlayerBig .hair{
+    left:12px!important;top:-4px!important;width:36px!important;height:12px!important;border-width:2px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumPlayerBig .eye{
+    top:11px!important;width:4px!important;height:9px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumPlayerBig .eye.l{left:23px!important;}
+  #menu.gameSetupOverlay.menuForceVisible .albumPlayerBig .eye.r{left:34px!important;}
+  #menu.gameSetupOverlay.menuForceVisible .albumPlayerBig .body{
+    left:10px!important;top:30px!important;width:40px!important;height:34px!important;border-width:2px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumPlayerBig .stripe{bottom:6px!important;height:7px!important;}
+  #menu.gameSetupOverlay.menuForceVisible .albumPlayerBig .arm{top:32px!important;width:13px!important;height:25px!important;border-width:2px!important;}
+  #menu.gameSetupOverlay.menuForceVisible .albumPlayerBig .leg{top:61px!important;width:14px!important;height:21px!important;border-width:2px!important;}
+  #menu.gameSetupOverlay.menuForceVisible .albumPlayerBig .leg.l{left:13px!important;}
+  #menu.gameSetupOverlay.menuForceVisible .albumPlayerBig .leg.r{right:13px!important;}
+  #menu.gameSetupOverlay.menuForceVisible .albumBallBig{width:14px!important;height:14px!important;border-width:2px!important;}
+  #menu.gameSetupOverlay.menuForceVisible .albumInfoBand{
+    margin:-4px 4px 0!important;
+    padding:4px 5px!important;
+    border-radius:7px!important;
+    border-width:1px!important;
+    box-shadow:0 3px 0 rgba(0,0,0,.22)!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumRating{
+    width:28px!important;height:28px!important;top:-15px!important;right:5px!important;font-size:10px!important;border-width:2px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumName{
+    font-size:12px!important;
+    line-height:.95!important;
+    max-width:calc(100% - 32px)!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumTeam{
+    font-size:6.5px!important;
+    margin-top:1px!important;
+    letter-spacing:.5px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumStats{
+    display:grid!important;
+    grid-template-columns:repeat(3,1fr)!important;
+    gap:2px!important;
+    margin:4px 4px 0!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumStat{
+    font-size:6px!important;
+    padding:2px 1px!important;
+    border-width:1px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .albumFooterBrand{
+    display:none!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyChoices{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    gap:3px!important;
+    margin-top:4px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyChoice{
+    min-height:24px!important;
+    border-radius:7px!important;
+    font-size:7.5px!important;
+    padding:1px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyFooter{
+    margin-top:4px!important;
+    padding-top:4px!important;
+    grid-template-columns:62px 1fr 84px!important;
+    gap:4px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyGhost,
+  #menu.gameSetupOverlay.menuForceVisible .storyPrimary{
+    min-height:29px!important;
+    border-radius:8px!important;
+    font-size:8.5px!important;
+    padding:0 5px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyPrimary{
+    min-width:0!important;
+    box-shadow:0 4px 0 #520000!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyVersusGrid{
+    grid-template-columns:1fr 30px 1fr!important;
+    gap:4px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyVersusGrid .playCard.albumCard{
+    min-height:148px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyVersusGrid .albumHero{
+    height:68px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyVersusGrid .albumName{
+    font-size:10px!important;
+  }
+  #menu.gameSetupOverlay.menuForceVisible .storyVs{
+    font-size:18px!important;
+  }
+}
+@media (orientation:landscape) and (max-height:390px){
+  #menu.gameSetupOverlay.menuForceVisible .storyLogo{font-size:20px!important;}
+  #menu.gameSetupOverlay.menuForceVisible .storyMenuBtn{min-height:27px!important;}
+  #menu.gameSetupOverlay.menuForceVisible .storyArrow{height:62px!important;}
+  #menu.gameSetupOverlay.menuForceVisible .playCard.albumCard,
+  #menu.gameSetupOverlay.menuForceVisible .playCard{min-height:132px!important;}
+  #menu.gameSetupOverlay.menuForceVisible .albumHero{height:58px!important;}
+  #menu.gameSetupOverlay.menuForceVisible .albumStats,
+  #menu.gameSetupOverlay.menuForceVisible .storyChoices{display:none!important;}
+}
+@media (orientation:portrait) and (max-width:900px){
+  #menu.gameSetupOverlay.menuForceVisible .sbShell.storyFlow{
+    width:min(620px,calc(var(--bfc-vh-px) - 10px))!important;
+    max-width:calc(var(--bfc-vh-px) - 10px)!important;
+    max-height:calc(var(--bfc-vw-px) - 10px)!important;
+  }
+}
 
 </style>
 </head>
@@ -1305,6 +1690,9 @@ const TACTICS={balanced:{name:'Équilibré 2-1-2',desc:'bloc simple, solutions c
 const keys={},pressed={},released={},mobileMove={x:0,y:0},gpMove={x:0,y:0},gp2Move={x:0,y:0},mobPressed={},mobReleased={},mobDown={},gpPressed={},gpReleased={},gpDown={},gpPrev={},gp2Pressed={},gp2Released={},gp2Down={},gp2Prev={};
 const XBOX_BTN=(window.BFCInput&&window.BFCInput.XBOX_BTN)||{A:0,B:1,X:2,Y:3,LB:4,RB:5,LT:6,RT:7,BACK:8,START:9,DU:12,DD:13,DL:14,DR:15};
 const GP_MAP=(window.BFCInput&&window.BFCInput.GAMEPLAY_MAP)||{pass:[XBOX_BTN.A],shoot:[XBOX_BTN.X],sprint:[XBOX_BTN.B],switch:[XBOX_BTN.Y,XBOX_BTN.LB],restart:[XBOX_BTN.START],back:[XBOX_BTN.B,XBOX_BTN.BACK],navUp:[XBOX_BTN.DU],navDown:[XBOX_BTN.DD],navLeft:[XBOX_BTN.DL],navRight:[XBOX_BTN.DR]};
+// UI pad state declared before boot/update can read it.
+let uiPad={move:{x:0,y:0},confirm:false,back:false,confirmDown:false,backDown:false,any:false};
+let uiPadPrevConfirm=false,uiPadPrevBack=false;
 class V{constructor(x=0,y=0){this.x=x;this.y=y}clone(){return new V(this.x,this.y)}set(x,y){this.x=x;this.y=y;return this}add(v){this.x+=v.x;this.y+=v.y;return this}sub(v){this.x-=v.x;this.y-=v.y;return this}mul(s){this.x*=s;this.y*=s;return this}len(){return Math.hypot(this.x,this.y)}norm(){const l=this.len();if(l>.0001){this.x/=l;this.y/=l}return this}static dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}}
 function entityScale(){return clamp(BAL.entityScale||1,.7,1.45)}
 class Player{constructor(x,y,t,role,c,i){this.pos=new V(x,y);this.spawn=new V(x,y);this.vel=new V();this.team=t;this.role=role;this.country=c;this.i=i;this.size=28;this.r=16;this.hasBall=false;this.control=false;this.control2=false;this.stun=0;this.cd=0;const prof=profileFor(c,i);this.name=prof.name;this.skin=prof.skin;this.hairStyle=prof.hairStyle;this.hairColor=prof.hairColor;this.captain=(i===Math.min(3,Math.max(0,matchSize-1)));this.captainAura=0;this.face=new V(t===TA?1:-1,0);this.energy=1;this.intent='';this.dead=false;this.respawn=0;this.forcedTarget=null;this.sprintCd=0;this.sprintCdMax=1;this.sprintActive=0;this.sprintActiveMax=1;this.sprintHeld=0;this.sprintTriggered=false;this.tired=0;this.passBuffer=0;this.ctrlTapT=0;this.switchBuffer=0;this.slideT=0;this.slideHit=0;this.slideDir=new V(t===TA?1:-1,0);this.slideRecover=0;this.volleyHintT=0;this.volleyFxT=0;this.headerFxT=0;this.headerJumpMax=0;this.headerJumpDur=46;this.pendingAirShot=null;this.aiSprintThink=0;this.sprintTapCd=0}
@@ -2500,17 +2888,9 @@ function inputPoints(x,y){
 function mobileButtonAt(x,y){
   let best=null,bestScore=Infinity;
   const pts=inputPoints(x,y);
-  
-const savedBtns=localStorage.getItem('brutal_fc_mobileBtns');if(savedBtns){try{const p=JSON.parse(savedBtns);mobileBtns.style.left=p.left;mobileBtns.style.top=p.top;mobileBtns.style.right='auto';mobileBtns.style.bottom='auto'}catch(_){}}
-let btnDrag=null;
-mobileBtns.addEventListener('pointerdown',e=>{if(!gamePaused)return;if(!e.target.closest('.mbtn'))return;btnDrag={id:e.pointerId,ox:e.clientX-mobileBtns.getBoundingClientRect().left,oy:e.clientY-mobileBtns.getBoundingClientRect().top};try{mobileBtns.setPointerCapture(e.pointerId)}catch(_){}});
-mobileBtns.addEventListener('pointermove',e=>{if(!btnDrag||e.pointerId!==btnDrag.id)return;const x=clamp(e.clientX-btnDrag.ox,6,innerWidth-mobileBtns.offsetWidth-6),y=clamp(e.clientY-btnDrag.oy,6,innerHeight-mobileBtns.offsetHeight-6);mobileBtns.style.left=x+'px';mobileBtns.style.top=y+'px';mobileBtns.style.right='auto';mobileBtns.style.bottom='auto'});
-function saveMobileButtons(){if(!btnDrag)return;localStorage.setItem('brutal_fc_mobileBtns',JSON.stringify({left:mobileBtns.style.left,top:mobileBtns.style.top}));btnDrag=null}
-mobileBtns.addEventListener('pointerup',saveMobileButtons);mobileBtns.addEventListener('pointercancel',saveMobileButtons);
-
-document.querySelectorAll('.mbtn').forEach(b=>{
+  document.querySelectorAll('.mbtn').forEach(b=>{
     const r=b.getBoundingClientRect();
-    const pad=34; // marge volontaire: le doigt humain n'est pas un curseur laser, incroyable mais vrai.
+    const pad=24;
     for(const p of pts){
       if(p.x>=r.left-pad&&p.x<=r.right+pad&&p.y>=r.top-pad&&p.y<=r.bottom+pad){
         const cx=r.left+r.width*.5,cy=r.top+r.height*.5;
@@ -2521,6 +2901,17 @@ document.querySelectorAll('.mbtn').forEach(b=>{
   });
   return best;
 }
+function resetMobileButtonsLayout(){
+  try{localStorage.removeItem('brutal_fc_mobileBtns')}catch(_){}
+  const btnRoot=document.getElementById('mobileBtns');
+  if(!btnRoot)return;
+  btnRoot.style.left='';
+  btnRoot.style.top='';
+  btnRoot.style.right='';
+  btnRoot.style.bottom='';
+}
+// Delayed until DOM constants are available and style reset can no longer hit TDZ.
+resetMobileButtonsLayout();
 function forceMobileButton(action,isDown){if(!action)return;const btn=document.querySelector(`.mbtn[data-action="${action}"]`);if(isDown){if(!mobDown[action])mobPressed[action]=true;mobDown[action]=true;if(btn)btn.classList.add('down')}else{if(mobDown[action])mobReleased[action]=true;mobDown[action]=false;if(btn)btn.classList.remove('down')}}
 
 function gamepadButtonDown(g,i){return window.BFCInput?BFCInput.buttonDown(g,i):!!(g&&g.buttons&&g.buttons[i]&&g.buttons[i].pressed)}
@@ -2563,8 +2954,6 @@ function pollGamepad(){
 }
 
 // --- MENU INPUT STABILISÉ : console + mobile ---
-const uiPad={move:{x:0,y:0},confirm:false,back:false,confirmDown:false,backDown:false,any:false};
-let uiPadPrevConfirm=false,uiPadPrevBack=false;
 function axis9UiDir(g){return window.BFCInput?BFCInput.axis9Dpad(g):axis9Dpad(g)}
 function uiGamepadMove(g){return window.BFCInput?BFCInput.bestMove(g,{deadZone:.18,normalizePower:false}):bestGamepadMove(g)}
 function pollUiPadInput(){
@@ -2605,14 +2994,11 @@ function menuDefaultFocusIndex(){
 }
 function menuConfirmShortcut(focused){
   const page=menuState&&menuState.page;
-  if(page===FLOW_PAGES.TEAM){
-    if(focused&&(focused.dataset.teamPrev!==undefined||focused.dataset.teamNext!==undefined||focused.dataset.size||focused.dataset.plan||focused.dataset.back!==undefined))return menuActivate(focused);
-    return advanceFlow();
-  }
-  if(page===FLOW_PAGES.OPPONENT){
-    if(focused&&(focused.dataset.oppPrev!==undefined||focused.dataset.oppNext!==undefined||focused.dataset.randomOpponent!==undefined||focused.dataset.back!==undefined))return menuActivate(focused);
-    return launchFromSetup();
-  }
+  // Validation console : A doit valider l'écran courant, pas dépendre du focus.
+  // Les flèches / options restent cliquables souris/tactile via menuActivate(),
+  // mais à la manette A sert de raccourci production : TEAM -> ADVERSAIRE -> MATCH.
+  if(page===FLOW_PAGES.TEAM)return advanceFlow();
+  if(page===FLOW_PAGES.OPPONENT)return launchFromSetup();
   return menuActivate(focused);
 }
 
@@ -2801,15 +3187,27 @@ function renderMenuPage(page){
 }
 function cardPlayerIndexForTeam(c){return (c.id*3+4)%6}
 function storyTeamCard(c,label){
- const idx=cardPlayerIndexForTeam(c),prof=profileFor(c,idx),isGold=(idx===4||c.ai>1.10||c.pass>1.16),pose=((c.id%5)-2)*3.2,tilt=((c.id%7)-3)*.9;
+ const idx=cardPlayerIndexForTeam(c),prof=profileFor(c,idx),isGold=(idx===4||c.ai>1.10||c.pass>1.16),pose=((c.id%5)-2)*4.2,tilt=((c.id%7)-3)*.7;
  const rating=Math.round(((c.speed+c.power+c.pass+c.tackle+c.ai)/5)*78);
  const role=['GK','DEF','MID','ATT','JOKER','CAP'][idx%6];
- return `<div class="playCard albumCard" style="--kit:${c.color};--stripe:${c.stripe};--skin:${prof.skin};--hair:${prof.hairColor};--pose:${pose}deg;--cardTilt:${tilt}deg">
+ const crop=['close','action','full','action','close','full'][(c.id+idx)%6];
+ const action=['run','shoot','tackle','pass'][(c.id+idx)%4];
+ const hairClass='hair-'+String(prof.hairStyle||'short').replace(/[^a-z0-9_-]/gi,'');
+ return `<div class="playCard albumCard daCard crop-${crop} action-${action} ${isGold?'isGold':''}" style="--kit:${c.color};--stripe:${c.stripe};--skin:${prof.skin};--hair:${prof.hairColor};--pose:${pose}deg;--cardTilt:${tilt}deg">
   <div class="albumSeries">${role}</div>
   <div class="albumFlag">${flagFor(c)}</div>
-  <div class="albumHero">
-    <div class="albumBallBig"></div>
-    <div class="albumPlayerBig"><div class="hair"></div><div class="head"><span class="eye l"></span><span class="eye r"></span></div><div class="body"><span class="stripe"></span></div><span class="arm l"></span><span class="arm r"></span><span class="leg l"></span><span class="leg r"></span></div>
+  <div class="albumHero daHero">
+    <div class="daPitchLines"></div>
+    <div class="daActionTrail"></div>
+    <div class="albumBallBig daBall"></div>
+    <div class="daPixelPlayer ${hairClass}">
+      <span class="da-shadow"></span>
+      <span class="da-head"><span class="da-eye l"></span><span class="da-eye r"></span><span class="da-beard"></span></span>
+      <span class="da-hair"></span>
+      <span class="da-body"><span class="da-stripe"></span><span class="da-captain">${isGold?'★':''}</span></span>
+      <span class="da-arm l"></span><span class="da-arm r"></span>
+      <span class="da-leg l"></span><span class="da-leg r"></span>
+    </div>
   </div>
   <div class="albumInfoBand">
     <div class="albumRating">${isGold?'★':'★'}${rating}</div>
@@ -2820,6 +3218,7 @@ function storyTeamCard(c,label){
   <div class="albumFooterBrand"><span>BRUTAL CARDS</span><b>${c.name.slice(0,3).toUpperCase()}</b></div>
  </div>`
 }
+
 function menuActivate(el){
   if(!el)return;
   if(el.dataset.mode){menuState.mode=el.dataset.mode;menuState.page=FLOW_PAGES.TEAM;menuFocus=0;renderMenu();return}
@@ -2871,22 +3270,22 @@ function bestMenuMove(fallbackMove){
   }
   return best;
 }
+const MENU_NAV_REPEAT_DELAY=.30;
 function navDirection(move){
   uiNavCd=Math.max(0,uiNavCd-1/60);
   let dir=null;
-  if(pressed.arrowdown||pressed.s||gpPressed.navDown)dir='down';
-  else if(pressed.arrowup||pressed.z||gpPressed.navUp)dir='up';
-  else if(pressed.arrowright||pressed.d||gpPressed.navRight)dir='right';
-  else if(pressed.arrowleft||pressed.q||gpPressed.navLeft)dir='left';
-  else if(uiNavCd<=0){
+  const keyDir=(pressed.arrowdown||pressed.s||gpPressed.navDown)?'down':(pressed.arrowup||pressed.z||gpPressed.navUp)?'up':(pressed.arrowright||pressed.d||gpPressed.navRight)?'right':(pressed.arrowleft||pressed.q||gpPressed.navLeft)?'left':null;
+  if(keyDir){
+    dir=keyDir;
+  }else if(uiNavCd<=0){
     const m=bestMenuMove(move);
     const ax=Math.abs(m.x||0),ay=Math.abs(m.y||0);
-    if(ay>=ax&&m.y>.24)dir='down';
-    else if(ay>=ax&&m.y<-.24)dir='up';
-    else if(ax>ay&&m.x>.24)dir='right';
-    else if(ax>ay&&m.x<-.24)dir='left';
+    if(ay>=ax&&m.y>.30)dir='down';
+    else if(ay>=ax&&m.y<-.30)dir='up';
+    else if(ax>ay&&m.x>.30)dir='right';
+    else if(ax>ay&&m.x<-.30)dir='left';
   }
-  if(dir)uiNavCd=.14;
+  if(dir)uiNavCd=MENU_NAV_REPEAT_DELAY;
   return dir;
 }
 function navMoveVector(move){const d=navDirection(move);if(!d)return 0;return (d==='down'||d==='right')?1:-1}
