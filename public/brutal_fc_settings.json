@@ -22,9 +22,9 @@
     "fieldH": 520,
     "camLead": 6,
     "camActionZoom": 0.06,
-    "camSlow": 0.24,
+    "camSlow": 0.05,
     "lobSlowStrength": 0.55,
-    "lobSlowDur": 1.2,
+    "lobSlowDur": 0.7,
     "lobSlowCurve": 2.25
   }
 }
