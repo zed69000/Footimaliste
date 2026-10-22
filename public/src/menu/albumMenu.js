@@ -115,6 +115,36 @@
   .pk-row{gap:6px}
   .pk-stage{min-height:auto}
 }
+/* Téléphone (paysage réel ou paysage forcé en portrait) : tout tient dans la hauteur, rien ne défile. */
+#albumOverlay{container-type:size}
+@media (max-height:560px),(max-width:900px) and (orientation:portrait){
+  #albumOverlay{padding:6px 10px;overflow:hidden}
+  .alb-wrap{gap:5px;height:100%}
+  .alb-title{font-size:18px;min-width:0}.alb-title small{display:none}
+  .alb-btn{min-height:32px;padding:0 9px;font-size:11px;border-radius:9px}
+  .alb-bars{gap:5px}.alb-bar{padding:4px 8px;font-size:9px}.alb-bar .lbl{margin-bottom:3px}.alb-track{height:7px}
+  .alb-pager{grid-template-columns:40px 1fr 40px}.alb-pageName{font-size:15px}.alb-pageName small{font-size:9px}
+  .alb-page{grid-template-columns:repeat(6,minmax(0,min(120px,19cqh)));justify-content:center;gap:6px;padding:7px}
+  .alb-page.complete::after{top:-8px;font-size:9px;padding:3px 7px}
+  .alb-flags{padding:2px 0 4px}.alb-flag{min-width:38px;font-size:15px}.alb-flag small{font-size:8px}
+  .alb-hint{display:none}
+  .stk .nm{font-size:9px}.stk .rt{font-size:7px}.stk .num{font-size:9px}
+  .pk-stage{min-height:0;gap:8px;flex:1}
+  .pk{width:min(200px,30cqh)}
+  .pk .pk-logo{font-size:min(30px,7cqh)}
+  .pk-row{grid-template-columns:repeat(5,minmax(0,min(140px,31cqh)));gap:8px}
+  .fl-tag{font-size:10px;margin-top:3px}
+  .pk-done{font-size:12px}
+  #albumReward{margin-top:6px;padding:6px 10px;font-size:11px}
+  #albumReward .rw-line{display:none}
+  #albumReward .rw-total{margin-top:0;padding-top:0;border-top:0}
+  #albumReward .rw-earn{margin-top:4px;font-size:13px}
+  #endOverlay .overlayTopIcon{display:none}
+  #endOverlay .endCard{padding:12px 14px!important}
+  #endOverlay .endCard h2{font-size:30px!important}
+  #endOverlay .endBtns{margin-top:8px!important}
+  #endOverlay .endBtns button{padding:9px 12px!important;font-size:12px!important}
+}
 @media (max-width:900px) and (orientation:portrait){
   #albumOverlay{inset:auto;left:50%;top:50%;width:100vh;height:100vw;transform:translate(-50%,-50%) rotate(90deg);transform-origin:center center}
 }
@@ -142,10 +172,10 @@
       if(typeof tone !== 'function') return;
       if(kind === 'tear'){ if(typeof noise === 'function') noise(.35, .2, 1800); tone(220, .2, 'sawtooth', .08, 2.2); }
       else if(kind === 'flip') tone(620, .06, 'triangle', .07, 1.3);
-      else if(kind === 'new'){ tone(660, .08, 'square', .07, 1.2); setTimeout(() => tone(990, .1, 'square', .06, 1.1), 70); }
+      else if(kind === 'new'){ tone(660, .08, 'triangle', .07, 1.2); setTimeout(() => tone(990, .1, 'triangle', .06, 1.1), 70); }
       else if(kind === 'rare'){ [700, 880, 1100].forEach((f, i) => setTimeout(() => tone(f, .1, 'triangle', .08, 1.1), i * 70)); }
-      else if(kind === 'legend'){ [523, 659, 784, 1047, 1319].forEach((f, i) => setTimeout(() => tone(f, .16, 'square', .09, 1.05), i * 90)); if(typeof noise === 'function') noise(.6, .18, 900); }
-      else if(kind === 'coin') tone(1200, .05, 'square', .05, 1.4);
+      else if(kind === 'legend'){ [523, 659, 784, 1047, 1319].forEach((f, i) => setTimeout(() => tone(f, .16, 'triangle', .09, 1.05), i * 90)); if(typeof noise === 'function') noise(.6, .18, 900); }
+      else if(kind === 'coin') tone(1200, .05, 'triangle', .05, 1.4);
     }catch(_){}
   }
 

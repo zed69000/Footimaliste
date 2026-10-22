@@ -1,5 +1,6 @@
 // Banc de test : matchs IA contre IA simulés en accéléré, avec statistiques.
-// Usage console : await BFCSim.run({ matches: 6, size: 5, seconds: 120 })
+// Hors du site publié. Pour l'utiliser : coller ce fichier dans la console du navigateur sur la page du jeu,
+// puis : await BFCSim.run({ matches: 6, size: 5, seconds: 120 })
 (function(){
   'use strict';
   const wrapCount = (name, stats, key, pre) => {
