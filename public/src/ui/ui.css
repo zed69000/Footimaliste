@@ -387,3 +387,21 @@ body.menuAttract #wrap::before,body.menuAttract #wrap::after{filter:brightness(.
 .tBtn.switch .ic{font-size:calc(var(--u)*3.2)}
 .tStick{border-color:rgba(255,210,63,.35)!important;background:radial-gradient(circle,rgba(255,210,63,.10),rgba(0,0,0,.08) 70%)!important}
 .tStick i{background:var(--dots-dark) 0 0/calc(var(--u)*1) calc(var(--u)*1),#ffd23f!important}
+
+/* ---------- Lisibilité mobile : l'image remplit l'écran, HUD réduit à une pastille ---------- */
+#wrap{overflow:hidden}
+#game{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:max(var(--sw),calc(var(--sh)*16/9));height:max(var(--sh),calc(var(--sw)*9/16))}
+#wrap::before,#wrap::after{display:none!important}
+#topUi{left:calc(env(safe-area-inset-left,0px) + var(--u)*2);top:calc(env(safe-area-inset-top,0px) + var(--u)*1.6);transform:none;align-items:flex-start}
+.hudMini{display:flex;align-items:center;gap:calc(var(--u)*1);padding:calc(var(--u)*.6) calc(var(--u)*1.4);background:rgba(13,11,12,.62);border-radius:calc(var(--u)*1.2);
+  font-family:var(--display);font-size:calc(var(--u)*3.6);line-height:1;color:var(--paper);box-shadow:0 0 0 calc(var(--u)*.35) rgba(0,0,0,.6)}
+.hudMini .t{padding:calc(var(--u)*.45) calc(var(--u)*1);background:var(--kit);color:var(--txt);font-size:calc(var(--u)*2.7);clip-path:polygon(6% 0,100% 0,94% 100%,0 100%)}
+.hudMini b{font-weight:400;color:var(--gold);min-width:.6em;text-align:center}
+.hudMini i{font-style:normal;opacity:.7}
+.hudMini .clk{margin-left:calc(var(--u)*.6);font-family:var(--ui);font-weight:900;font-size:calc(var(--u)*2.8);opacity:.9}
+.hudMini .clk.hurry{color:var(--red);animation:blink .5s steps(2) infinite;opacity:1}
+.hudMini .wx{font-family:var(--ui);font-size:calc(var(--u)*2.8)}
+.hudMini b.bump{animation:scoreBump .7s cubic-bezier(.2,1.8,.4,1);display:inline-block}
+#pauseBtn{width:calc(var(--u)*9);height:calc(var(--u)*9);font-size:calc(var(--u)*3.4)}
+#hudBtns{top:calc(env(safe-area-inset-top,0px) + var(--u)*1.6);right:calc(env(safe-area-inset-right,0px) + var(--u)*2)}
+#toast{top:calc(env(safe-area-inset-top,0px) + var(--u)*12);font-size:calc(var(--u)*3.4)}

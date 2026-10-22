@@ -60,7 +60,6 @@
 
 <script src="src/ui/stage.js"></script>
 <script src="src/ui/logo.js"></script>
-<script src="src/ui/stands.js"></script>
 <script src="src/brand/musclorDuckSplash.js"></script>
 <script src="src/input/inputManager.js"></script>
 <script src="src/menu/menuManager.js"></script>
@@ -141,7 +140,7 @@ function awayKit(c){const light=luminance(c.color)>170;const body=light?'#111111
 function invertKit(c){return makeKit(c.stripe,c.color)}
 function safeKit(c){return makeKit(luminance(c.color)>170?'#0f1820':'#ffffff',c.stripe||c.color)}
 function kitScore(a,b){return colorDist(a.color,b.color)+colorDist(a.stripe,b.stripe)*.6+colorDist(a.color,b.stripe)*.25+colorDist(a.stripe,b.color)*.25}
-function resolveMatchKits(){teamAKit=homeKit(teamA);const options=[homeKit(teamB),invertKit(teamB),awayKit(teamB),safeKit(teamB)];let best=options[0],bestScore=-1;for(const k of options){const sc=kitScore(teamAKit,k);if(sc>bestScore){bestScore=sc;best=k}}if(bestScore<170)teamAKit=awayKit(teamA);teamBKit=best;if(window.bfPaintStands)bfPaintStands(teamAKit,teamBKit)}
+function resolveMatchKits(){teamAKit=homeKit(teamA);const options=[homeKit(teamB),invertKit(teamB),awayKit(teamB),safeKit(teamB)];let best=options[0],bestScore=-1;for(const k of options){const sc=kitScore(teamAKit,k);if(sc>bestScore){bestScore=sc;best=k}}if(bestScore<170)teamAKit=awayKit(teamA);teamBKit=best}
 function teamKit(team){return team===TA?teamAKit:teamBKit}
 let players=[],bench=[],ball,particles=[],confetti=[],fireworks=[],bloodDecals=[],items=[],controlled=null,controlled2=null,scoreA=0,scoreB=0,timer=120,gameOver=false,gamePaused=false,winShown=false,last=performance.now(),shake=0,toastT=0,oneTwo=null,shootHold=false,shootCharge=0,passHold=false,passCharge=0,p2ShootHold=false,p2ShootCharge=0,p2PassHold=false,p2PassCharge=0,preMatchT=0,goalHoldT=0,pendingKick=null,goalSlow=0,volleySlow=0,lobSlowT=0,lobSlowDurCache=0,gameTick=0;let switchMem1={t:0,ref:null,i:0,team:null},switchMem2={t:0,ref:null,i:0,team:null}; let netFxL={y:H/2,t:0,power:0},netFxR={y:H/2,t:0,power:0};
 let introT=6.0,introDone=false,attractReady=false,attractKickTimer=0;let passComboA=0,passComboBest=0,passComboTimer=0,passComboSuperReady=0;let replayBuffer=[],goalReplay=null,replayFrameSkip=0;
@@ -173,42 +172,80 @@ function updateWeather(dt){maybeChangeWeather(dt);const w=matchEnv.weather;const
 function drawWeather(){if(matchEnv.weather==='rain'||matchEnv.weather==='storm'){ctx.strokeStyle=matchEnv.weather==='storm'?'rgba(210,230,255,.42)':'rgba(180,220,255,.32)';ctx.lineWidth=1.4;for(const p of weatherParticles){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x+5,p.y+12);ctx.stroke();}}else if(matchEnv.weather==='snow'){ctx.fillStyle='rgba(255,255,255,.8)';for(const p of weatherParticles){ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();}}if(lightningT>0){ctx.fillStyle='rgba(255,255,255,'+(lightningT*1.8)+')';ctx.fillRect(0,0,W,H);}}
 function drawVignette(){const g=ctx.createRadialGradient(W/2,H/2,120,W/2,H/2,Math.max(W,H)*.78);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.34)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);}
 function drawDayMood(){let c='rgba(0,0,0,0)';if(matchEnv.tod==='morning')c='rgba(255,210,120,.08)';else if(matchEnv.tod==='evening')c='rgba(255,120,80,.12)';if(matchEnv.weather==='storm')c='rgba(60,90,120,.18)';ctx.fillStyle=c;ctx.fillRect(0,0,W,H);}
+// Partie du canvas réellement visible : l'image remplit l'écran (rognée en haut/bas ou sur les côtés).
+function visibleRect(){
+ const S=window.BFCStage,sw=S?S.width:W,sh=S?S.height:H,sc=Math.max(sw/W,sh/H);
+ const vw=Math.min(W,sw/sc),vh=Math.min(H,sh/sc);
+ return {x0:(W-vw)/2,y0:(H-vh)/2,w:vw,h:vh,s:sc};
+}
+// Caméra de lecture : zoom réglé pour qu'un joueur fasse ~36 px à l'écran, dézoom quand il faut voir loin
+// (ballon rapide, lob, tir en charge, près du but adverse, engagement), et avance dans le sens de l'attaque.
 function updateCamera(dt){
  if(!ball)return;
+ const vr=visibleRect();
  const active=controlled||controlled2;
- const bpos=ball.pos.clone();
- const speed=ball.vel.len();
- const fast=clamp((speed-7)/14,0,1);
- const airborne=clamp((ball.z-6)/26,0,1);
- const leadFrames=(BAL.camLead||14)+(fast*14)+(airborne*10);
- const lead=bpos.clone().add(ball.vel.clone().mul(leadFrames));
- let objective=lead.clone();
- if(ball.owner){
-  const gx=ball.owner.team===TA?field.x+field.w:field.x;
-  objective=ball.owner.pos.clone().mul(.70).add(new V(gx,H/2).mul(.30));
- }else if(speed>8||ball.z>8){
-  const targetGoalX=(ball.lastKicker&&ball.lastKicker.team===TA)?field.x+field.w:(ball.lastKicker&&ball.lastKicker.team===TB)?field.x:bpos.x;
-  objective=lead.clone().mul(.74).add(new V(targetGoalX,H/2).mul(.26));
- }
- let focus=active?active.pos.clone().mul(.30).add(bpos.clone().mul(.42)).add(objective.clone().mul(.28)):bpos.clone().mul(.68).add(objective.clone().mul(.32));
- const fit=clamp(Math.min(W/(field.w+92),H/(field.h+82)),.62,1.08);
- const compact=(ball.owner&&speed<5&&ball.z<5)?(BAL.camActionZoom||0):0;
- const wide=fast*.18+airborne*.16;
- cam.tz=clamp(fit+compact-wide,.58,1.16);
- const halfW=W/(2*cam.tz),halfH=H/(2*cam.tz),pad=38;
+ const bpos=ball.pos.clone(),speed=ball.vel.len();
+ const fast=clamp((speed-7)/12,0,1),airborne=clamp((ball.z-6)/24,0,1);
+ const sprite=28*entityScale()*vr.s;
+ const fit=Math.min(vr.w/(field.w+60),vr.h/(field.h+60));
+ const base=clamp(34/sprite,Math.max(fit,1),2.2);
+ const carrier=ball.owner;
+ const kicker=carrier||ball.lastKicker;
+ const goalX=kicker?(kicker.team===TA?field.x+field.w:field.x):bpos.x;
+ const nearGoal=carrier&&Math.abs(carrier.pos.x-goalX)<340?1:0;
+ const aiming=(active&&active.hasBall&&shootCharge>.15)?1:0;
+ const kick=(kickoffSetupT>0||preMatchT>0)?1:0;
+ const wide=Math.max(fast*.85,airborne*.75,aiming*.55,nearGoal*.35,kick);
+ const far=Math.max(fit,base*.6);
+ cam.tz=clamp(base+(far-base)*wide,fit,2.2);
+ let focus;
+ if(carrier){
+  const dir=carrier.team===TA?1:-1;
+  focus=carrier.pos.clone().add(new V(dir*70,0));
+  if(nearGoal||aiming)focus=focus.mul(.68).add(new V(goalX,H/2).mul(.32));
+ }else if(speed>6||ball.z>8){
+  focus=bpos.clone().add(ball.vel.clone().mul(10+fast*12)).mul(.72).add(new V(goalX,bpos.y).mul(.28));
+ }else focus=bpos.clone();
+ if(active&&!carrier)focus=focus.mul(.68).add(active.pos.clone().mul(.32));
+ const halfW=vr.w/(2*cam.tz),halfH=vr.h/(2*cam.tz),pad=34;
  if(field.w+pad*2>halfW*2)focus.x=clamp(focus.x,field.x+halfW-pad,field.x+field.w-halfW+pad);else focus.x=field.x+field.w/2;
  if(field.h+pad*2>halfH*2)focus.y=clamp(focus.y,field.y+halfH-pad,field.y+field.h-halfH+pad);else focus.y=field.y+field.h/2;
  cam.tx=W/2-focus.x;
  cam.ty=H/2-focus.y;
- const follow=clamp(3.9+fast*3.5+airborne*2.2,3.6,8.5);
- const zoomFollow=clamp(2.8+fast*2.5,2.6,6.0);
+ const follow=clamp(4.2+fast*3.5+airborne*2.2,4,8.5);
+ // dézoom vif pour ne rien rater, retour en douceur
+ const zoomFollow=cam.tz<cam.z?5:1.8;
  cam.x+=(cam.tx-cam.x)*Math.min(1,dt*follow);
  cam.y+=(cam.ty-cam.y)*Math.min(1,dt*follow);
  cam.z+=(cam.tz-cam.z)*Math.min(1,dt*zoomFollow);
  const screenX=W/2+(bpos.x+cam.x-W/2)*cam.z,screenY=H/2+(bpos.y+cam.y-H/2)*cam.z;
- const edge=Math.max(Math.abs(screenX-W/2)/(W*.46),Math.abs(screenY-H/2)/(H*.44));
+ const edge=Math.max(Math.abs(screenX-W/2)/(vr.w*.46),Math.abs(screenY-H/2)/(vr.h*.44));
  const lag=clamp(V.dist(new V(cam.x,cam.y),new V(cam.tx,cam.ty))/130,0,1);
  cam.risk=clamp(Math.max(edge-.80,0)*2.4+lag*.45+fast*.20+airborne*.18,0,1);
+}
+// Repères au bord de l'écran : coéquipiers et porteur adverse hors champ, ballon perdu de vue.
+function drawOffscreen(){
+ if(!ball||!players.length)return;
+ const vr=visibleRect(),m=20;
+ const x0=vr.x0+m,y0=vr.y0+m,x1=vr.x0+vr.w-m,y1=vr.y0+vr.h-m,cx=W/2,cy=H/2;
+ const toScreen=w=>({x:W/2+(w.x+cam.x-W/2)*cam.z,y:H/2+(w.y+cam.y-H/2)*cam.z});
+ const marks=[];
+ for(const p of players){if(p.dead||p.role==='keeper')continue;if(p.team===TA||p.hasBall)marks.push({w:p.pos,p})}
+ if(!ball.owner)marks.push({w:ball.pos,ball:true});
+ for(const mk of marks){
+  const sp=toScreen(mk.w);
+  if(sp.x>x0&&sp.x<x1&&sp.y>y0&&sp.y<y1)continue;
+  const dx=sp.x-cx,dy=sp.y-cy;
+  const tx=dx>0?(x1-cx)/dx:dx<0?(x0-cx)/dx:Infinity,ty=dy>0?(y1-cy)/dy:dy<0?(y0-cy)/dy:Infinity;
+  const t=Math.min(tx,ty),ex=cx+dx*t,ey=cy+dy*t,a=Math.atan2(dy,dx);
+  const col=mk.ball?'#ffffff':mk.p.team===TA?(mk.p.control?'#ffd23f':'#3fd8ff'):'#ff2d2d';
+  ctx.save();ctx.translate(ex,ey);
+  ctx.save();ctx.rotate(a);ctx.fillStyle=col;ctx.strokeStyle='#000';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(24,0);ctx.lineTo(13,-9);ctx.lineTo(13,9);ctx.closePath();ctx.stroke();ctx.fill();ctx.restore();
+  ctx.fillStyle='rgba(13,11,12,.78)';ctx.strokeStyle=col;ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,14,0,Math.PI*2);ctx.fill();ctx.stroke();
+  if(mk.ball){ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(0,0,6,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#000';ctx.lineWidth=2;ctx.stroke()}
+  else{const k=teamKit(mk.p.team);ctx.fillStyle=mk.p.skin||'#f0c58d';ctx.fillRect(-7,-7,14,14);ctx.fillStyle=k.color;ctx.fillRect(-7,0,14,7);ctx.fillStyle=k.stripe;ctx.fillRect(-7,5,14,2);ctx.fillStyle='#111';ctx.fillRect(-1,-5,2,4)}
+  ctx.restore();
+ }
 }
 function kickoffOwnHalfX(team,role,i){
  const left=team===TA;
@@ -1441,8 +1478,8 @@ function updateHud(tag){
  const prev=hudKey.split('|'),same=prev[0]==String(teamA.id)&&prev[1]==String(teamB.id);
  hudKey=key;
  const ka=teamKit(TA),kb=teamKit(TB),ink=c=>luminance(c)>150?'#111':'#fff';
- const right=mode==='training'?`<div class="hudTeam b" style="--kit:#2a2427;--txt:#ffd23f"><span class="hudName">TUTO</span></div>`:`<div class="hudTeam b" style="--kit:${kb.color};--txt:${ink(kb.color)}"><span class="hudName">${hudAbbr(teamB)}</span><span class="hudFlag">${flagFor(teamB)}</span></div>`;
- topUi.innerHTML=`<div class="hudRow"><div class="hudTeam a" style="--kit:${ka.color};--txt:${ink(ka.color)}"><span class="hudFlag">${flagFor(teamA)}</span><span class="hudName">${hudAbbr(teamA)}</span></div><div class="hudScore"><b class="${same&&prev[2]!=String(scoreA)?'bump':''}">${scoreA}</b><i>-</i><b class="${same&&prev[3]!=String(scoreB)?'bump':''}">${scoreB}</b></div>${right}</div><div class="hudClock ${t<=15&&mode!=='training'?'hurry':''}">${tag?`<span class="tag">${tag}</span>`:''}${mode==='aiwatch'?'<span class="tag">OBS IA</span>':''}<span>${clock}</span><span class="wx">${WEATHER_ICON[matchEnv.weather]||''}</span></div>`;
+ const tb=mode==='training'?'<span class="t b" style="--kit:#2a2427;--txt:#ffd23f">TUTO</span>':`<span class="t b" style="--kit:${kb.color};--txt:${ink(kb.color)}">${hudAbbr(teamB)}</span>`;
+ topUi.innerHTML=`<div class="hudMini"><span class="t a" style="--kit:${ka.color};--txt:${ink(ka.color)}">${hudAbbr(teamA)}</span><b class="${same&&prev[2]!=String(scoreA)?'bump':''}">${scoreA}</b><i>-</i><b class="${same&&prev[3]!=String(scoreB)?'bump':''}">${scoreB}</b>${tb}<span class="clk ${t<=15&&mode!=='training'?'hurry':''}">${tag?tag+' · ':''}${mode==='aiwatch'?'IA · ':''}${clock}</span><span class="wx">${WEATHER_ICON[matchEnv.weather]||''}</span></div>`;
 }
 function goal(team,hitY=H/2){if(isUiCinematicActive()){resetAttractBallAfterGoal();cleanCinematicUiNoise();return}if(goalHoldT>0||goalReplay)return;setMatchRuntimeState((window.BFC_MATCH&&BFC_MATCH.MATCH_STATES)?BFC_MATCH.MATCH_STATES.GOAL_PAUSE:'goal_pause','goal');resetPassCombo('goal');const scorer=(ball.lastKicker&&ball.lastKicker.team===team?ball.lastKicker.name:(team===TA?teamA.name:teamB.name));showMatchBanner('BUT !! '+scorer);sfxGoal();team===TA?scoreA++:scoreB++;if(team===TA)netFxR={y:hitY,t:1,power:1};else netFxL={y:hitY,t:1,power:1};confettiBurst();show(team===TA?'BUUUUT ! PUBLIC EN FOLIE':'BUT ENCAISSÉ');shake=18;pendingKick=team===TA?TB:TA;goalHoldT=2.35;goalSlow=1.15;if(ball){if(ball.owner)ball.owner.hasBall=false;ball.owner=null;ball.vel.set(0,0);ball.z=0;ball.vz=0;ball.ignorePlayer=null;ball.ignoreT=0}players.forEach(p=>{p.control=false;p.control2=false;p.hasBall=false;p.kickTarget=null});const user=players.find(p=>p.team===TA&&!p.dead&&p.role==='mid')||players.find(p=>p.team===TA&&!p.dead&&p.role==='striker')||players.find(p=>p.team===TA&&!p.dead);if(user)setControl(user);goalText.textContent=(team===TA?teamA.name:teamB.name)+' marque. Remise en jeu : '+(pendingKick===TA?teamA.name:teamB.name);if(!startGoalReplay())goalPause.style.display='flex'}function inGoal(y){return Math.abs(y-H/2)<goalWidth()/2}function canScoreBall(b,scoringTeam){const headerMargin=b.headerShotT>0?6:0;if(!inGoal(b.pos.y)||b.z>=goalHeight()+headerMargin)return false;if(kickFromOwnBoxCannotScore(b,scoringTeam))return false;return true}
 
@@ -1553,7 +1590,7 @@ function updateAttractCamera(dt){
 }
 
 function update(dt){pollGamepad();pollUiPadInput();updateAudioMode(dt);const uiCine=isUiCinematicActive();if(uiCine)cleanCinematicUiNoise();else popupFrame(dt);gameTick+=dt*60*(uiCine?1:timeScale());if(!uiCine)updateWeather(dt);if(!uiCine)updateCamera(dt);if(volleySlow>0)volleySlow=Math.max(0,volleySlow-dt);if(lobSlowT>0)lobSlowT=Math.max(0,lobSlowT-dt);if(netFxL.t>0)netFxL.t=Math.max(0,netFxL.t-dt*2.6);if(netFxR.t>0)netFxR.t=Math.max(0,netFxR.t-dt*2.6);if(!introDone){updateIntro(dt);if(wantsSkipIntro())skipIntro();updateAttractMatch(dt*.55);updateAttractCamera(dt);clearInput();return}if(campaignOverlay&&campaignOverlay.style.display!=='none'){document.body.classList.add('menuAttract');updateAttractMatch(dt*.50);updateAttractCamera(dt);campaignNavFrame();clearInput();return}if(isMenuOverlayOpen()){document.body.classList.add('menuAttract');updateAttractMatch(dt*.72);updateAttractCamera(dt);menuNavFrame();clearInput();return}if(gamePaused){pauseMenuNavFrame();updateCrowd(dt);clearInput();return}if(gpPressed.restart||pressed.escape){openPause();clearInput();return}if(pressed.r)startGame(mode);const skip=actionPress('pass')||actionPress('shoot')||pressed.enter;if(preMatchT>0){preMatchT-=dt;preMatchEntranceUpdate(dt);if(skip)preMatchT=0;if(preMatchT<=0){matchIntro.style.display='none';launchKickoffWhistle(TA)}updateCelebrationFX(dt);clearInput();return}if(goalReplay){if(skip){goalReplay=null;goalPause.style.display='flex'}else updateGoalReplay(dt);updateCelebrationFX(dt);particlesStep(dt*.18);clearInput();return}if(goalHoldT>0){const sdt=dt*.25;goalHoldT-=dt;if(skip)goalHoldT=0;updateCelebrationFX(dt);particlesStep(sdt);if(goalHoldT<=0){goalPause.style.display='none';if((mode==='friendly'||mode==='campaign')&&(scoreA>=3||scoreB>=3)){gameOver=true;showEnd()}else{beginKickoffSequence(pendingKick||TA);pendingKick=null}}clearInput();return}if(kickoffSetupT>0){kickoffUpdate(dt);updateCelebrationFX(dt);clearInput();return}if(hitStopT>0){hitStopT-=dt;updateCelebrationFX(dt);return}const realDt=goalSlow>0?dt*.45:dt;if(goalSlow>0)goalSlow-=dt;timer-=dt;if(timer<=0&&mode!=='training'){timer=0;gameOver=true;if(!winShown)showEnd()}if(gameOver){if(endOverlay.style.display!=='none'){endMenuNavFrame();updateCelebrationFX(dt);if(Math.random()<.06)fireworkBurst(rand(110,W-110),rand(70,230));clearInput();return}updateCelebrationFX(dt);if(Math.random()<.06)fireworkBurst(rand(110,W-110),rand(70,230));clearInput();return}if(oneTwo){oneTwo.t-=realDt;if(oneTwo.t<=0)oneTwo=null}players.forEach(p=>p.update());ball.update();recordReplayFrame();particlesStep(realDt*timeScale());updateCelebrationFX(dt);clearInput()}
-function particlesStep(dt){const f=dt*60;particles.forEach(p=>{p.x+=p.vx*f;p.y+=p.vy*f;p.vx*=Math.pow(.93,f);p.vy*=Math.pow(.93,f);p.life-=f});particles=particles.filter(p=>p.life>0)}function updateCelebrationFX(dt){const f=dt*60;if(gameOver&&Math.random()<.45){const colors=['#ffd34a','#ff3333','#53d7ff','#ffffff','#35e86b'];confetti.push({x:rand(0,W),y:rand(-30,20),vx:rand(-1.2,1.2),vy:rand(1,3.2),life:rand(80,150),s:rand(3,7),c:colors[Math.floor(rand(0,colors.length))]})}confetti.forEach(c=>{c.x+=c.vx*f;c.y+=c.vy*f;c.vy+=.05*f;c.life-=f});confetti=confetti.filter(c=>c.life>0);fireworks.forEach(fw=>{fw.x+=fw.vx*f;fw.y+=fw.vy*f;fw.vy+=.025*f;fw.life-=f});fireworks=fireworks.filter(fw=>fw.life>0)}function draw(){const uiCine=isUiCinematicActive();if(uiCine)cleanCinematicUiNoise();if(!uiCine&&goalReplay){drawGoalReplay();return}ctx.clearRect(0,0,W,H);ctx.save();let sx=0,sy=0;if(!uiCine&&shake>0){const sk=Math.min(shake,14);sx=rand(-sk,sk);sy=rand(-sk,sk);shake*=.86;if(shake<.4)shake=0}else if(uiCine){shake=0}ctx.translate(W/2,H/2);ctx.scale(cam.z,cam.z);ctx.translate(cam.x+sx-W/2,cam.y+sy-H/2);fieldDraw();if(!uiCine&&preMatchT<=0&&kickoffSetupT<=0)drawBench();if(!uiCine)drawBlood();if(!uiCine)drawPassGuide();players.slice().sort((a,b)=>a.pos.y-b.pos.y).forEach(p=>p.draw());ball.draw();if(!uiCine)drawCharge();drawParticles();ctx.restore();if(!uiCine){drawWeather();drawDayMood();drawVignette();drawConfetti();drawFireworks();topUi.style.display='flex';updateHud();if(gameOver)gameOverDraw()}else{topUi.style.display='none';if(toast)toast.style.opacity=0;if(matchBanner)matchBanner.classList.remove('run')}}
+function particlesStep(dt){const f=dt*60;particles.forEach(p=>{p.x+=p.vx*f;p.y+=p.vy*f;p.vx*=Math.pow(.93,f);p.vy*=Math.pow(.93,f);p.life-=f});particles=particles.filter(p=>p.life>0)}function updateCelebrationFX(dt){const f=dt*60;if(gameOver&&Math.random()<.45){const colors=['#ffd34a','#ff3333','#53d7ff','#ffffff','#35e86b'];confetti.push({x:rand(0,W),y:rand(-30,20),vx:rand(-1.2,1.2),vy:rand(1,3.2),life:rand(80,150),s:rand(3,7),c:colors[Math.floor(rand(0,colors.length))]})}confetti.forEach(c=>{c.x+=c.vx*f;c.y+=c.vy*f;c.vy+=.05*f;c.life-=f});confetti=confetti.filter(c=>c.life>0);fireworks.forEach(fw=>{fw.x+=fw.vx*f;fw.y+=fw.vy*f;fw.vy+=.025*f;fw.life-=f});fireworks=fireworks.filter(fw=>fw.life>0)}function draw(){const uiCine=isUiCinematicActive();if(uiCine)cleanCinematicUiNoise();if(!uiCine&&goalReplay){drawGoalReplay();return}ctx.clearRect(0,0,W,H);ctx.save();let sx=0,sy=0;if(!uiCine&&shake>0){const sk=Math.min(shake,14);sx=rand(-sk,sk);sy=rand(-sk,sk);shake*=.86;if(shake<.4)shake=0}else if(uiCine){shake=0}ctx.translate(W/2,H/2);ctx.scale(cam.z,cam.z);ctx.translate(cam.x+sx-W/2,cam.y+sy-H/2);fieldDraw();if(!uiCine&&preMatchT<=0&&kickoffSetupT<=0)drawBench();if(!uiCine)drawBlood();if(!uiCine)drawPassGuide();players.slice().sort((a,b)=>a.pos.y-b.pos.y).forEach(p=>p.draw());ball.draw();if(!uiCine)drawCharge();drawParticles();ctx.restore();if(!uiCine){drawWeather();drawDayMood();drawVignette();drawOffscreen();drawConfetti();drawFireworks();topUi.style.display='flex';updateHud();if(gameOver)gameOverDraw()}else{topUi.style.display='none';if(toast)toast.style.opacity=0;if(matchBanner)matchBanner.classList.remove('run')}}
 function drawGoalFrame(side,color,fx){const frontX=side==='left'?field.x:field.x+field.w;const backX=side==='left'?field.x-18:field.x+field.w+18;const sign=side==='left'?-1:1;const top=H/2-field.goal/2,bot=H/2+field.goal/2;ctx.fillStyle='rgba(255,255,255,.05)';ctx.beginPath();ctx.moveTo(frontX,top);ctx.lineTo(backX,top+10);ctx.lineTo(backX,bot-10);ctx.lineTo(frontX,bot);ctx.closePath();ctx.fill();ctx.strokeStyle=color;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(frontX,top);ctx.lineTo(backX,top+10);ctx.lineTo(backX,bot-10);ctx.lineTo(frontX,bot);ctx.stroke();ctx.strokeStyle='rgba(255,255,255,.45)';ctx.lineWidth=1.5;for(let i=0;i<=6;i++){const yy=top+i*(field.goal/6);const bend=fx.t>0?sign*Math.max(0,1-Math.abs(yy-fx.y)/42)*14*fx.t:0;ctx.beginPath();ctx.moveTo(frontX,yy);ctx.lineTo(backX+bend,yy);ctx.stroke()}for(let i=1;i<=4;i++){const dep=i/4;const bend=fx.t>0?sign*9*fx.t*(1-dep):0;ctx.beginPath();ctx.moveTo(frontX+sign*dep*2,top+i*4);ctx.lineTo(frontX+sign*(backX-frontX)*dep+bend,top+10+(bot-top-20)*dep);ctx.stroke()}}function chalkLine(x1,y1,x2,y2,w=2.4){const steps=22;ctx.save();ctx.lineCap='round';for(let i=0;i<steps;i++){if(Math.random()<.18)continue;const t0=i/steps,t1=(i+.82)/steps;const ax=x1+(x2-x1)*t0,ay=y1+(y2-y1)*t0,bx=x1+(x2-x1)*t1,by=y1+(y2-y1)*t1;ctx.globalAlpha=rand(.22,.62);ctx.strokeStyle='rgba(255,255,255,1)';ctx.lineWidth=w*rand(.55,1.25);ctx.beginPath();ctx.moveTo(ax+rand(-.8,.8),ay+rand(-.8,.8));ctx.lineTo(bx+rand(-.8,.8),by+rand(-.8,.8));ctx.stroke()}ctx.restore();ctx.globalAlpha=1}
 function chalkCircle(cx,cy,r){const steps=52;ctx.save();ctx.lineCap='round';for(let i=0;i<steps;i++){if(Math.random()<.2)continue;const a0=i/steps*Math.PI*2,a1=(i+.65)/steps*Math.PI*2;ctx.globalAlpha=rand(.20,.55);ctx.strokeStyle='rgba(255,255,255,1)';ctx.lineWidth=rand(1.1,2.5);ctx.beginPath();ctx.arc(cx+rand(-.6,.6),cy+rand(-.6,.6),r+rand(-1.2,1.2),a0,a1);ctx.stroke()}ctx.restore();ctx.globalAlpha=1}
 function drawChalkField(){chalkLine(field.x,field.y,field.x+field.w,field.y,2.2);chalkLine(field.x,field.y+field.h,field.x+field.w,field.y+field.h,2.2);chalkLine(field.x,field.y,field.x,field.y+field.h,2.2);chalkLine(field.x+field.w,field.y,field.x+field.w,field.y+field.h,2.2);chalkLine(W/2,field.y,W/2,field.y+field.h,2.0);chalkCircle(W/2,H/2,62);chalkLine(field.x,H/2-95,field.x+96,H/2-95,1.8);chalkLine(field.x+96,H/2-95,field.x+96,H/2+95,1.8);chalkLine(field.x,H/2+95,field.x+96,H/2+95,1.8);chalkLine(field.x+field.w-96,H/2-95,field.x+field.w,H/2-95,1.8);chalkLine(field.x+field.w-96,H/2-95,field.x+field.w-96,H/2+95,1.8);chalkLine(field.x+field.w-96,H/2+95,field.x+field.w,H/2+95,1.8)}
