@@ -7,11 +7,11 @@
   if(!S) return;
 
   const CSS = `
-#albumOverlay{position:fixed;inset:0;z-index:70;display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:10px;overflow-y:auto;overflow-x:hidden;background:radial-gradient(circle at 50% 0%,rgba(255,211,74,.22),transparent 30%),linear-gradient(180deg,#2a0909 0%,#120d14 60%,#07090c 100%);color:#fff8df;font-family:Arial,Helvetica,sans-serif;touch-action:pan-y}
+#albumOverlay{position:absolute;inset:0;z-index:70;display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:10px;overflow:hidden;background:radial-gradient(circle at 50% 0%,rgba(255,211,74,.22),transparent 30%),linear-gradient(180deg,#2a0909 0%,#120d14 60%,#07090c 100%);color:#fff8df;font-family:Arial,Helvetica,sans-serif;touch-action:pan-y}
 #albumOverlay.open{display:flex}
 .alb-wrap{width:min(980px,100%);display:flex;flex-direction:column;gap:10px}
 .alb-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.alb-title{font-family:Impact,'Arial Black',Arial,sans-serif;font-size:28px;letter-spacing:1px;color:#ff3838;text-shadow:0 3px 0 #4b0000;flex:1;min-width:180px}
+.alb-title{font-family:'Bowlby One',Impact,'Arial Black',sans-serif;font-size:28px;letter-spacing:1px;color:#ff3838;text-shadow:0 3px 0 #4b0000;flex:1;min-width:180px}
 .alb-title small{display:block;font-family:Arial,sans-serif;font-size:11px;color:#ffd34a;letter-spacing:2px;text-shadow:none}
 .alb-btn{border:1px solid rgba(255,255,255,.14);border-radius:12px;min-height:42px;padding:0 14px;font-weight:900;color:#fff8df;background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.03));cursor:pointer;touch-action:manipulation;font-size:13px}
 .alb-btn.primary{background:linear-gradient(180deg,#ffcf40,#b77800);color:#160d00;border-color:#ffe08a;box-shadow:0 4px 0 #5b3000}
@@ -29,7 +29,7 @@
 .alb-pageName small{display:block;font-size:11px;color:#ffd34a;letter-spacing:1px}
 .alb-page{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;padding:14px;border-radius:18px;background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 2px,transparent 2px 22px),linear-gradient(180deg,#f3ead2,#d9ccaa);box-shadow:inset 0 0 0 6px rgba(0,0,0,.08),0 20px 50px rgba(0,0,0,.45);position:relative}
 .alb-page.complete::after{content:'COMPLET ★ +2 PAQUETS';position:absolute;right:14px;top:-12px;padding:5px 10px;border-radius:8px;background:#c40000;color:#fff;font-weight:900;font-size:11px;transform:rotate(3deg);box-shadow:0 3px 0 #500}
-.alb-flags{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 8px;touch-action:pan-x}
+.alb-flags{display:flex;justify-content:center;gap:6px;overflow:hidden;padding:4px 2px 8px}
 .alb-flag{flex:0 0 auto;min-width:46px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#fff;padding:4px 4px 3px;cursor:pointer;text-align:center;font-size:20px;line-height:1}
 .alb-flag small{display:block;font-size:9px;font-weight:900;margin-top:2px;color:#d9d2bd}
 .alb-flag.cur{border-color:#ffd34a;background:rgba(255,211,74,.22)}
@@ -69,7 +69,7 @@
 .pk-stage{min-height:min(70vh,520px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
 .pk{position:relative;width:min(220px,46vw);aspect-ratio:3/4.3;border-radius:14px;cursor:pointer;background:linear-gradient(135deg,#c40000 0%,#ff3333 30%,#ffd34a 50%,#ff3333 70%,#7a0000 100%);background-size:220% 220%;animation:stkHolo 4s linear infinite,pkIdle 1.6s ease-in-out infinite;box-shadow:0 20px 50px rgba(0,0,0,.6),inset 0 0 0 4px rgba(255,255,255,.35);display:grid;place-items:center;text-align:center}
 .pk::before{content:'';position:absolute;left:0;right:0;top:9%;height:3px;background:repeating-linear-gradient(90deg,#fff 0 6px,transparent 6px 10px);opacity:.7}
-.pk .pk-logo{font-family:Impact,'Arial Black',sans-serif;font-size:30px;line-height:.9;color:#fff;text-shadow:0 3px 0 #500,0 0 18px rgba(0,0,0,.5)}
+.pk .pk-logo{font-family:'Bowlby One',Impact,'Arial Black',sans-serif;font-size:30px;line-height:.9;color:#fff;text-shadow:0 3px 0 #500,0 0 18px rgba(0,0,0,.5)}
 .pk .pk-logo small{display:block;font-size:12px;letter-spacing:3px;margin-top:6px;color:#160d00;text-shadow:none}
 .pk.shake{animation:pkShake .12s linear infinite}
 .pk.torn{animation:pkTear .45s ease-in forwards}
@@ -82,7 +82,7 @@
 .fl-in{position:relative;transition:transform .5s cubic-bezier(.3,1.3,.5,1);transform-style:preserve-3d}
 .fl.up .fl-in{transform:rotateY(180deg)}
 .fl-back,.fl-front{backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.fl-back{position:absolute;inset:0;border-radius:10px;border:3px solid #fff;background:repeating-linear-gradient(45deg,#c40000 0 10px,#8a0000 10px 20px);display:grid;place-items:center;font-family:Impact,sans-serif;font-size:22px;color:#ffd34a;box-shadow:0 8px 18px rgba(0,0,0,.4)}
+.fl-back{position:absolute;inset:0;border-radius:10px;border:3px solid #fff;background:repeating-linear-gradient(45deg,#c40000 0 10px,#8a0000 10px 20px);display:grid;place-items:center;font-family:'Bowlby One',Impact,sans-serif;font-size:22px;color:#ffd34a;box-shadow:0 8px 18px rgba(0,0,0,.4)}
 .fl-back.glow-rare{box-shadow:0 0 18px 4px rgba(200,230,255,.75)}
 .fl-back.glow-legend{box-shadow:0 0 28px 8px rgba(255,211,74,.95);animation:pkShake .2s linear infinite}
 .fl-front{transform:rotateY(180deg)}
@@ -117,36 +117,43 @@
 }
 /* Téléphone (paysage réel ou paysage forcé en portrait) : tout tient dans la hauteur, rien ne défile. */
 #albumOverlay{container-type:size}
-@media (max-height:560px),(max-width:900px) and (orientation:portrait){
-  #albumOverlay{padding:6px 10px;overflow:hidden}
-  .alb-wrap{gap:5px;height:100%}
-  .alb-title{font-size:18px;min-width:0}.alb-title small{display:none}
-  .alb-btn{min-height:32px;padding:0 9px;font-size:11px;border-radius:9px}
-  .alb-bars{gap:5px}.alb-bar{padding:4px 8px;font-size:9px}.alb-bar .lbl{margin-bottom:3px}.alb-track{height:7px}
-  .alb-pager{grid-template-columns:40px 1fr 40px}.alb-pageName{font-size:15px}.alb-pageName small{font-size:9px}
-  .alb-page{grid-template-columns:repeat(6,minmax(0,min(120px,19cqh)));justify-content:center;gap:6px;padding:7px}
-  .alb-page.complete::after{top:-8px;font-size:9px;padding:3px 7px}
-  .alb-flags{padding:2px 0 4px}.alb-flag{min-width:38px;font-size:15px}.alb-flag small{font-size:8px}
-  .alb-hint{display:none}
-  .stk .nm{font-size:9px}.stk .rt{font-size:7px}.stk .num{font-size:9px}
-  .pk-stage{min-height:0;gap:8px;flex:1}
-  .pk{width:min(200px,30cqh)}
-  .pk .pk-logo{font-size:min(30px,7cqh)}
-  .pk-row{grid-template-columns:repeat(5,minmax(0,min(140px,31cqh)));gap:8px}
-  .fl-tag{font-size:10px;margin-top:3px}
-  .pk-done{font-size:12px}
-  #albumReward{margin-top:6px;padding:6px 10px;font-size:11px}
-  #albumReward .rw-line{display:none}
-  #albumReward .rw-total{margin-top:0;padding-top:0;border-top:0}
-  #albumReward .rw-earn{margin-top:4px;font-size:13px}
-  #endOverlay .overlayTopIcon{display:none}
-  #endOverlay .endCard{padding:12px 14px!important}
-  #endOverlay .endCard h2{font-size:30px!important}
-  #endOverlay .endBtns{margin-top:8px!important}
-  #endOverlay .endBtns button{padding:9px 12px!important;font-size:12px!important}
-}
-@media (max-width:900px) and (orientation:portrait){
-  #albumOverlay{inset:auto;left:50%;top:50%;width:100vh;height:100vw;transform:translate(-50%,-50%) rotate(90deg);transform-origin:center center}
+@media all{html.bfSmall #albumOverlay{padding:6px 10px;overflow:hidden}}
+@media all{
+  html.bfSmall .alb-wrap{gap:5px;height:100%}
+  html.bfSmall .alb-title{font-size:18px;min-width:0}
+  html.bfSmall .alb-title small{display:none}
+  html.bfSmall .alb-btn{min-height:38px;padding:0 12px;font-size:13px;border-radius:10px}
+  html.bfSmall .alb-bars{gap:5px}
+  html.bfSmall .alb-bar{padding:4px 8px;font-size:11px}
+  html.bfSmall .alb-bar .lbl{margin-bottom:3px}
+  html.bfSmall .alb-track{height:7px}
+  html.bfSmall .alb-pager{grid-template-columns:40px 1fr 40px}
+  html.bfSmall .alb-pageName{font-size:18px}
+  html.bfSmall .alb-pageName small{font-size:11px}
+  html.bfSmall .alb-page{grid-template-columns:repeat(6,minmax(0,min(120px,19cqh)));justify-content:center;gap:6px;padding:7px}
+  html.bfSmall .alb-page.complete::after{top:-8px;font-size:9px;padding:3px 7px}
+  html.bfSmall .alb-flags{padding:2px 0 4px}
+  html.bfSmall .alb-flag{min-width:40px;font-size:17px}
+  html.bfSmall .alb-flag small{font-size:10px}
+  html.bfSmall .alb-hint{display:none}
+  html.bfSmall .stk .nm{font-size:11px}
+  html.bfSmall .stk .rt{font-size:9px}
+  html.bfSmall .stk .num{font-size:10px}
+  html.bfSmall .pk-stage{min-height:0;gap:8px;flex:1}
+  html.bfSmall .pk{width:min(200px,30cqh)}
+  html.bfSmall .pk .pk-logo{font-size:min(30px,7cqh)}
+  html.bfSmall .pk-row{grid-template-columns:repeat(5,minmax(0,min(140px,31cqh)));gap:8px}
+  html.bfSmall .fl-tag{font-size:12px;margin-top:3px}
+  html.bfSmall .pk-done{font-size:14px}
+  html.bfSmall #albumReward{margin-top:6px;padding:6px 10px;font-size:13px}
+  html.bfSmall #albumReward .rw-line{display:none}
+  html.bfSmall #albumReward .rw-total{margin-top:0;padding-top:0;border-top:0}
+  html.bfSmall #albumReward .rw-earn{margin-top:4px;font-size:13px}
+  html.bfSmall #endOverlay .overlayTopIcon{display:none}
+  html.bfSmall #endOverlay .endCard{padding:12px 14px!important}
+  html.bfSmall #endOverlay .endCard h2{font-size:30px!important}
+  html.bfSmall #endOverlay .endBtns{margin-top:8px!important}
+  html.bfSmall #endOverlay .endBtns button{padding:9px 12px!important;font-size:12px!important}
 }
 `;
 
@@ -207,10 +214,10 @@
     document.head.appendChild(st);
     overlay = document.createElement('div');
     overlay.id = 'albumOverlay';
-    document.body.appendChild(overlay);
+    (document.getElementById('stage')||document.body).appendChild(overlay);
     toastEl = document.createElement('div');
     toastEl.id = 'albumToast';
-    document.body.appendChild(toastEl);
+    (document.getElementById('stage')||document.body).appendChild(toastEl);
     overlay.addEventListener('click', onClick);
     overlay.addEventListener('pointerdown', e => e.stopPropagation());
     overlay.addEventListener('pointerup', e => e.stopPropagation());
@@ -250,7 +257,7 @@
     const have = S.teamProgress(state, page);
     let cells = '';
     for(let s = 0; s < S.PER_TEAM; s++) cells += stickerHtml(page * S.PER_TEAM + s, { showCount:true });
-    const flags = list.map((t, i) => {
+    const flags = list.map((t, i) => [t, i]).filter(([t, i]) => { const d = Math.abs(i - page); return Math.min(d, list.length - d) <= 7; }).sort((a, b) => ((a[1] - page + list.length + 7) % list.length) - ((b[1] - page + list.length + 7) % list.length)).map(([t, i]) => {
       const n = S.teamProgress(state, i);
       return `<button class="alb-flag ${i === page ? 'cur' : ''} ${n === S.PER_TEAM ? 'done' : ''}" data-page="${i}">${flag(t)}<small>${n === S.PER_TEAM ? '★' : n + '/6'}</small></button>`;
     }).join('');
@@ -263,8 +270,6 @@
       <div class="alb-flags">${flags}</div>
       <div class="alb-hint">Gagne des points en match (victoire, buts, KO sanglants) · 1 paquet offert par jour · Chaque KO augmente tes chances de sticker SANGLANT</div>
     </div>`;
-    const cur = overlay.querySelector('.alb-flag.cur');
-    if(cur) try{ cur.scrollIntoView({ block:'nearest', inline:'center' }); }catch(_){}
     focus = 0;
   }
 
@@ -330,7 +335,7 @@
     if(el) el.classList.add('up');
     sfx('flip');
     setTimeout(() => {
-      if(c.rarity === 'legend'){ sfx('legend'); const f = document.createElement('div'); f.className = 'alb-flash'; document.body.appendChild(f); setTimeout(() => f.remove(), 700); }
+      if(c.rarity === 'legend'){ sfx('legend'); const f = document.createElement('div'); f.className = 'alb-flash'; (document.getElementById('stage')||document.body).appendChild(f); setTimeout(() => f.remove(), 700); }
       else if(c.rarity === 'rare') sfx('rare');
       else if(c.isNew) sfx('new');
     }, 260);
