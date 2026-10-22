@@ -10,13 +10,16 @@
   const root = document.getElementById('mobileControls');
   if(!S || !root) return;
 
+  // Plaques penchées : contour en vrai trait SVG (noir + couleur), intérieur très transparent pour voir le jeu.
+  const SHAPES = { shoot:'10,0 100,7 92,100 0,92', pass:'0,9 93,0 100,90 7,100', sprint:'6,0 100,12 94,100 0,88', switch:'10,0 100,10 90,100 0,90' };
+  const plate = k => `<svg class="pl" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="${SHAPES[k]}" fill="rgba(13,11,12,.28)" stroke="#000" stroke-width="7" vector-effect="non-scaling-stroke"/><polygon points="${SHAPES[k]}" fill="none" stroke="currentColor" stroke-width="3.5" vector-effect="non-scaling-stroke"/></svg>`;
   root.innerHTML = '<div class="tStick" id="tStick"><i></i></div>' +
-    '<div class="tBtn shoot" data-a="shoot"><span class="ring"></span><span class="lbl">TIR</span></div>' +
-    '<div class="tBtn pass" data-a="pass"><span class="lbl">PASSE</span></div>' +
-    '<div class="tBtn sprint" data-a="sprint"><span class="lbl">SPRINT</span></div>' +
-    '<div class="tBtn switch" data-a="switch"><span class="lbl">CHANGE</span></div>';
+    '<div class="tBtn shoot" data-a="shoot">' + plate('shoot') + '<span class="ic">⚽</span><span class="lbl">TIR</span></div>' +
+    '<div class="tBtn pass" data-a="pass">' + plate('pass') + '<span class="ic">➜</span><span class="lbl">PASSE</span></div>' +
+    '<div class="tBtn sprint" data-a="sprint">' + plate('sprint') + '<span class="ic">⚡</span><span class="lbl">SPRINT</span></div>' +
+    '<div class="tBtn switch" data-a="switch">' + plate('switch') + '<span class="ic">⇄</span><span class="lbl">CHANGE</span></div>';
   const stickEl = root.querySelector('#tStick'), nub = stickEl.querySelector('i');
-  const btns = Array.from(root.querySelectorAll('.tBtn')).map(el => ({ el, a: el.dataset.a, lbl: el.querySelector('.lbl'), ids: new Set() }));
+  const btns = Array.from(root.querySelectorAll('.tBtn')).map(el => ({ el, a: el.dataset.a, lbl: el.querySelector('.lbl'), ic: el.querySelector('.ic'), ids: new Set() }));
   const shootBtn = btns.find(b => b.a === 'shoot'), passBtn = btns.find(b => b.a === 'pass');
 
   let stickId = null, origin = null;
@@ -32,9 +35,11 @@
   function hitButton(p){
     let best = null, bestD = Infinity;
     for(const b of btns){
-      const r = b.el.offsetWidth / 2, cx = b.el.offsetLeft + r, cy = b.el.offsetTop + r;
-      const d = Math.hypot(p.x - cx, p.y - cy);
-      if(d < r * 1.18 && d < bestD){ best = b; bestD = d; }
+      // Plaques rectangulaires : zone de toucher élargie de 15 %, le plus proche gagne.
+      const hw = b.el.offsetWidth / 2, hh = b.el.offsetHeight / 2, cx = b.el.offsetLeft + hw, cy = b.el.offsetTop + hh;
+      const dx = Math.abs(p.x - cx) / (hw * 1.15), dy = Math.abs(p.y - cy) / (hh * 1.15);
+      const d = Math.max(dx, dy);
+      if(d <= 1 && d < bestD){ best = b; bestD = d; }
     }
     return best;
   }
@@ -108,7 +113,7 @@
     const theirs = typeof ball !== 'undefined' && ball && ball.owner && me && ball.owner.team !== me.team;
     const passLbl = hasBall ? 'PASSE' : theirs ? 'TACLE' : 'PASSE';
     const shootLbl = hasBall ? 'TIR' : 'REPRISE';
-    if(passLbl !== lastPass){ passBtn.lbl.textContent = passLbl; passBtn.el.style.setProperty('--c', theirs && !hasBall ? 'var(--red)' : 'var(--cyan)'); lastPass = passLbl; }
+    if(passLbl !== lastPass){ passBtn.lbl.textContent = passLbl; passBtn.ic.textContent = passLbl === 'TACLE' ? '💥' : '➜'; passBtn.el.style.setProperty('--c', theirs && !hasBall ? 'var(--red)' : 'var(--cyan)'); lastPass = passLbl; }
     if(shootLbl !== lastShoot){ shootBtn.lbl.textContent = shootLbl; lastShoot = shootLbl; }
     const ch = typeof shootCharge !== 'undefined' ? shootCharge : 0;
     if(Math.abs(ch - lastCharge) > .005){

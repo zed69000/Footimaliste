@@ -37,31 +37,47 @@
 .alb-hint{text-align:center;font-size:11px;color:#d9d2bd}
 
 /* Stickers */
-.stk{position:relative;aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:linear-gradient(180deg,#e9e7e2,#cfccc5);border:3px solid #fff;outline:3px solid var(--kit);outline-offset:-6px;box-shadow:0 4px 0 rgba(0,0,0,.25),0 8px 16px rgba(0,0,0,.25);color:#fff;font-weight:900;user-select:none}
-.stk.empty{background:repeating-linear-gradient(45deg,rgba(0,0,0,.05) 0 6px,transparent 6px 12px),#cdbf98;border:2px dashed rgba(60,40,10,.35);box-shadow:inset 0 2px 8px rgba(0,0,0,.18);color:rgba(60,40,10,.6)}
-.stk .num{position:absolute;left:5px;top:4px;font-size:10px;background:rgba(0,0,0,.45);padding:1px 4px;border-radius:4px;z-index:3}
-.stk.empty .num{background:none;font-size:13px;left:50%;top:38%;transform:translate(-50%,-50%)}
-.stk .flg{position:absolute;right:4px;top:3px;font-size:14px;z-index:3;color:#2a2622;font-weight:900}
-.stk .role{position:absolute;left:50%;top:58%;transform:translateX(-50%);font-size:10px;letter-spacing:1px}
-.stk .band{position:absolute;left:0;right:0;bottom:0;padding:3px 3px 4px;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.78));text-align:center;z-index:3}
-.stk .nm{font-size:11px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 0 #000}
-.stk .rt{font-size:8px;letter-spacing:1px;color:#ffd34a}
-.stk .cnt{position:absolute;right:4px;bottom:30px;z-index:4;font-size:10px;background:#ff3333;border-radius:99px;padding:1px 5px;box-shadow:0 2px 0 #500}
-.stk .stripe{display:none}
-/* Joueur = cube du jeu : peau, bandeau de cheveux, un œil vertical, maillot en bas, bande de couleur, ombre en diagonale. */
-.stk .pl{position:absolute;left:50%;top:18%;width:52%;aspect-ratio:1;transform:translateX(-50%);z-index:2;background:var(--skin)}
-.stk .pl::before{content:'';position:absolute;left:-14%;bottom:-14%;width:100%;height:14%;background:rgba(0,0,0,.28);transform:skewX(-45deg);transform-origin:top left;z-index:-1}
-.stk .pl .hr{position:absolute;left:0;top:0;width:100%;height:12%;background:var(--hair)}
-.stk .pl.h-shaved .hr{height:5%}.stk .pl.h-long .hr,.stk .pl.h-curly .hr{height:20%}.stk .pl.h-mohawk .hr{left:38%;width:24%;height:18%}
-.stk .pl .ey{position:absolute;left:46%;top:20%;width:8%;height:24%;background:#1a1414}
+/* Sticker BRUTAL CARDS : fond rayonnant aux couleurs du pays (façon Tazo) + trame, grand numéro de maillot
+   en fond (façon Panini), joueur cube détouré blanc/noir au centre, logo BFC en coin, bandeau nom en bas. */
+.stk{position:relative;aspect-ratio:4/5;border-radius:8%/6.4%;overflow:hidden;container-type:inline-size;color:#fff;font-weight:900;user-select:none;
+  --ray:color-mix(in srgb,var(--kit) 72%,var(--stripe));
+  background:radial-gradient(circle at 50% 44%,rgba(255,255,255,.5),transparent 40%),
+    radial-gradient(rgba(0,0,0,.18) 24%,transparent 28%) 0 0/6px 6px,
+    repeating-conic-gradient(from -6deg at 50% 44%,var(--kit) 0 9deg,var(--ray) 9deg 18deg);
+  box-shadow:0 0 0 3px #fff,0 0 0 5px #0d0b0c,3px 5px 0 5px rgba(0,0,0,.4)}
+.stk .jn{position:absolute;right:-2%;top:-4%;z-index:1;font-family:'Bowlby One',Impact,sans-serif;font-size:62cqw;line-height:1;color:rgba(255,255,255,.18);-webkit-text-stroke:1.4cqw rgba(255,255,255,.85)}
+.stk .lg{position:absolute;left:5%;top:5%;z-index:4;padding:1.5cqw 3cqw;background:#ffd23f;color:#120c0a;font-family:'Bowlby One',Impact,sans-serif;font-size:8cqw;line-height:1;
+  clip-path:polygon(4% 10%,100% 0,94% 92%,0 100%);transform:rotate(-8deg);filter:drop-shadow(1px 1px 0 #000)}
+.stk .flg{position:absolute;right:5%;top:5%;z-index:4;font-size:10cqw;line-height:1;color:#fff;text-shadow:0 0 2px #000,0 0 2px #000}
+.stk .pl{position:absolute;left:50%;top:17%;width:46%;aspect-ratio:1;transform:translateX(-50%) rotate(-4deg);z-index:2;background:var(--skin);
+  box-shadow:0 0 0 1.4cqw #0d0b0c,0 0 0 3.4cqw #fff,0 0 0 4.6cqw #0d0b0c,3cqw 4cqw 0 4.6cqw rgba(0,0,0,.35)}
+.stk .pl .hr{position:absolute;left:0;top:0;width:100%;height:13%;background:var(--hair)}
+.stk .pl.h-shaved .hr{height:5%}.stk .pl.h-long .hr,.stk .pl.h-curly .hr{height:21%}.stk .pl.h-mohawk .hr{left:38%;width:24%;height:19%}
+.stk .pl .ey{position:absolute;left:46%;top:21%;width:8%;height:24%;background:#1a1414}
 .stk .pl .bd{position:absolute;left:0;bottom:0;width:100%;height:50%;background:var(--kit)}
 .stk .pl .bd::after{content:'';position:absolute;left:0;right:0;bottom:0;height:22%;background:var(--stripe)}
 .stk .pl.h-beard .bd::before{content:'';position:absolute;left:0;right:0;top:-14%;height:14%;background:var(--hair)}
-.stk.rare{border-color:#d8e6f2}
-.stk.rare::before{content:'';position:absolute;inset:0;z-index:5;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.45) 45%,transparent 60%);background-size:250% 100%;animation:stkShine 2.8s linear infinite}
-.stk.legend{border-color:#ffd34a;box-shadow:0 0 0 2px #8a5a00,0 0 18px rgba(255,211,74,.75)}
-.stk.legend::before{content:'';position:absolute;inset:0;z-index:5;pointer-events:none;mix-blend-mode:overlay;background:linear-gradient(115deg,#ff3333,#ffd34a,#53d7ff,#35e86b,#ff3333);background-size:300% 300%;opacity:.55;animation:stkHolo 3s linear infinite}
-.stk.bloody::after{content:'';position:absolute;inset:0;z-index:4;pointer-events:none;background:radial-gradient(circle at 22% 30%,rgba(196,0,0,.9) 0 9%,transparent 10%),radial-gradient(circle at 74% 64%,rgba(140,0,0,.85) 0 12%,transparent 13%),radial-gradient(circle at 60% 20%,rgba(196,0,0,.8) 0 4%,transparent 5%),radial-gradient(circle at 35% 78%,rgba(196,0,0,.75) 0 5%,transparent 6%),radial-gradient(circle at 86% 30%,rgba(120,0,0,.8) 0 3%,transparent 4%)}
+.stk .band{position:absolute;left:4%;right:4%;bottom:4.5%;z-index:4;padding:2.4cqw 4cqw 2.8cqw;background:#0d0b0c;clip-path:polygon(0 12%,100% 0,98% 100%,2% 92%);text-align:left}
+.stk .no{display:inline-block;margin-right:2cqw;padding:0 2cqw;background:#ffd23f;color:#120c0a;font-size:7.5cqw;line-height:1.3;vertical-align:middle}
+.stk .nm{display:inline;font-family:'Bowlby One',Impact,sans-serif;font-weight:400;font-size:10cqw;line-height:1.05;text-transform:uppercase;vertical-align:middle}
+.stk .rt{display:block;margin-top:1cqw;font-size:6.6cqw;letter-spacing:.06em;color:#ffd23f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stk .cnt{position:absolute;right:5%;top:20%;z-index:5;padding:.5cqw 3cqw;background:#e01b22;color:#fff;font-size:9cqw;line-height:1.2;clip-path:polygon(6% 0,100% 8%,94% 100%,0 92%)}
+/* rare : reflet argenté qui passe */
+.stk.rare{box-shadow:0 0 0 3px #e8f1fa,0 0 0 5px #0d0b0c,3px 5px 0 5px rgba(0,0,0,.4)}
+.stk.rare::before{content:'';position:absolute;inset:0;z-index:5;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.55) 45%,transparent 60%);background-size:250% 100%;animation:stkShine 2.8s linear infinite}
+/* légende : rayons dorés, cadre or, holo arc-en-ciel */
+.stk.legend{--kit-l:#ffd23f;background:radial-gradient(circle at 50% 44%,rgba(255,255,255,.7),transparent 40%),radial-gradient(rgba(0,0,0,.18) 24%,transparent 28%) 0 0/6px 6px,repeating-conic-gradient(from -6deg at 50% 44%,#ffd23f 0 9deg,#ff8a00 9deg 18deg);
+  box-shadow:0 0 0 3px #ffd23f,0 0 0 5px #0d0b0c,0 0 16px 6px rgba(255,210,63,.6)}
+.stk.legend::before{content:'';position:absolute;inset:0;z-index:5;pointer-events:none;mix-blend-mode:overlay;background:linear-gradient(115deg,#ff3333,#ffd34a,#53d7ff,#35e86b,#ff3333);background-size:300% 300%;opacity:.5;animation:stkHolo 3s linear infinite}
+.stk.legend .lg{background:#e01b22;color:#fff}
+/* sanglant : éclaboussures */
+.stk.bloody::after{content:'';position:absolute;inset:0;z-index:4;pointer-events:none;background:radial-gradient(circle at 22% 34%,rgba(196,0,0,.92) 0 8%,transparent 9%),radial-gradient(circle at 76% 58%,rgba(140,0,0,.9) 0 11%,transparent 12%),radial-gradient(circle at 62% 24%,rgba(196,0,0,.85) 0 4%,transparent 5%),radial-gradient(circle at 33% 66%,rgba(196,0,0,.8) 0 5%,transparent 6%),radial-gradient(circle at 86% 36%,rgba(120,0,0,.85) 0 3%,transparent 4%)}
+/* emplacement vide : silhouette + numéro, sur papier tramé */
+.stk.empty{background:radial-gradient(rgba(60,40,10,.16) 24%,transparent 28%) 0 0/6px 6px,#d8cba6;box-shadow:inset 0 0 0 2px rgba(60,40,10,.35),inset 0 3px 10px rgba(0,0,0,.18);color:rgba(60,40,10,.75)}
+.stk.empty .sil{position:absolute;left:50%;top:24%;width:44%;aspect-ratio:1;transform:translateX(-50%);background:rgba(60,40,10,.22)}
+.stk.empty .sil::after{content:'?';position:absolute;inset:0;display:grid;place-items:center;font-family:'Bowlby One',Impact,sans-serif;font-size:24cqw;color:rgba(255,255,255,.55)}
+.stk.empty .num{position:absolute;left:0;right:0;bottom:16%;text-align:center;font-family:'Bowlby One',Impact,sans-serif;font-size:13cqw;line-height:1}
+.stk.empty .role{position:absolute;left:0;right:0;bottom:7%;text-align:center;font-size:7cqw;letter-spacing:.14em}
 @keyframes stkShine{from{background-position:150% 0}to{background-position:-100% 0}}
 @keyframes stkHolo{from{background-position:0% 50%}to{background-position:300% 50%}}
 
@@ -111,7 +127,6 @@
   .alb-btn{min-height:34px;padding:0 9px;font-size:11px}
   .alb-page{gap:6px;padding:8px}
   .alb-bars{gap:5px}
-  .stk .nm{font-size:9px}
   .pk-row{gap:6px}
   .pk-stage{min-height:auto}
 }
@@ -130,15 +145,12 @@
   html.bfSmall .alb-pager{grid-template-columns:40px 1fr 40px}
   html.bfSmall .alb-pageName{font-size:18px}
   html.bfSmall .alb-pageName small{font-size:11px}
-  html.bfSmall .alb-page{grid-template-columns:repeat(6,minmax(0,min(120px,19cqh)));justify-content:center;gap:6px;padding:7px}
+  html.bfSmall .alb-page{grid-template-columns:repeat(6,minmax(0,min(130px,28cqh)));justify-content:center;gap:6px;padding:7px}
   html.bfSmall .alb-page.complete::after{top:-8px;font-size:9px;padding:3px 7px}
   html.bfSmall .alb-flags{padding:2px 0 4px}
   html.bfSmall .alb-flag{min-width:40px;font-size:17px}
   html.bfSmall .alb-flag small{font-size:10px}
   html.bfSmall .alb-hint{display:none}
-  html.bfSmall .stk .nm{font-size:11px}
-  html.bfSmall .stk .rt{font-size:9px}
-  html.bfSmall .stk .num{font-size:10px}
   html.bfSmall .pk-stage{min-height:0;gap:8px;flex:1}
   html.bfSmall .pk{width:min(200px,30cqh)}
   html.bfSmall .pk .pk-logo{font-size:min(30px,7cqh)}
@@ -186,6 +198,8 @@
     }catch(_){}
   }
 
+  // Numéros de maillot par poste (GK, DEF, MID, ATT, JOKER, CAP), affichés en grand derrière le joueur.
+  const JERSEY = [1, 4, 8, 9, 10, 7];
   function stickerHtml(id, opts){
     opts = opts || {};
     const c = teams()[S.teamOf(id)];
@@ -193,7 +207,7 @@
     const owned = opts.force || state.owned[id] > 0;
     if(!c) return '';
     if(!owned){
-      return `<div class="stk empty"><span class="num">${S.stickerNumber(id)}</span><span class="role">${S.ROLES[slot]}</span></div>`;
+      return `<div class="stk empty"><span class="sil"></span><span class="num">#${S.stickerNumber(id)}</span><span class="role">${S.ROLES[slot]}</span></div>`;
     }
     const p = profile(c, slot);
     const rarity = S.rarityOf(id);
@@ -201,10 +215,11 @@
     const hair = 'h-' + String(p.hairStyle || 'short').replace(/[^a-z]/gi, '');
     const copies = state.owned[id] || 0;
     const cnt = opts.showCount && copies > 1 ? `<span class="cnt">×${copies}</span>` : '';
+    const code = typeof hudAbbr === 'function' ? hudAbbr(c) : c.name.slice(0, 3).toUpperCase();
     return `<div class="stk ${rarity} ${bloody ? 'bloody' : ''}" style="--kit:${c.color};--stripe:${c.stripe};--skin:${p.skin};--hair:${p.hairColor}">
-      <span class="num">${S.stickerNumber(id)}</span><span class="flg">${flag(c)}</span><span class="stripe"></span>
+      <span class="jn">${JERSEY[slot]}</span><span class="lg">BFC</span><span class="flg">${flag(c)}</span>
       <div class="pl ${hair}"><span class="hr"></span><span class="ey"></span><span class="bd"></span></div>
-      ${cnt}<div class="band"><div class="nm">${esc(p.name)}</div><div class="rt">${S.ROLES[slot]} · ${S.RARITY[rarity].label}${bloody ? ' · SANGLANT' : ''}</div></div></div>`;
+      ${cnt}<div class="band"><span class="no">${S.stickerNumber(id)}</span><span class="nm">${esc(p.name)}</span><span class="rt">${code} · ${S.ROLES[slot]}${rarity !== 'common' ? ' · ' + S.RARITY[rarity].label : ''}${bloody ? ' · SANGLANT' : ''}</span></div></div>`;
   }
 
   function ensureDom(){

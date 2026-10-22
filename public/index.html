@@ -60,6 +60,7 @@
 
 <script src="src/ui/stage.js"></script>
 <script src="src/ui/logo.js"></script>
+<script src="src/ui/stands.js"></script>
 <script src="src/brand/musclorDuckSplash.js"></script>
 <script src="src/input/inputManager.js"></script>
 <script src="src/menu/menuManager.js"></script>
@@ -140,7 +141,7 @@ function awayKit(c){const light=luminance(c.color)>170;const body=light?'#111111
 function invertKit(c){return makeKit(c.stripe,c.color)}
 function safeKit(c){return makeKit(luminance(c.color)>170?'#0f1820':'#ffffff',c.stripe||c.color)}
 function kitScore(a,b){return colorDist(a.color,b.color)+colorDist(a.stripe,b.stripe)*.6+colorDist(a.color,b.stripe)*.25+colorDist(a.stripe,b.color)*.25}
-function resolveMatchKits(){teamAKit=homeKit(teamA);const options=[homeKit(teamB),invertKit(teamB),awayKit(teamB),safeKit(teamB)];let best=options[0],bestScore=-1;for(const k of options){const sc=kitScore(teamAKit,k);if(sc>bestScore){bestScore=sc;best=k}}if(bestScore<170)teamAKit=awayKit(teamA);teamBKit=best}
+function resolveMatchKits(){teamAKit=homeKit(teamA);const options=[homeKit(teamB),invertKit(teamB),awayKit(teamB),safeKit(teamB)];let best=options[0],bestScore=-1;for(const k of options){const sc=kitScore(teamAKit,k);if(sc>bestScore){bestScore=sc;best=k}}if(bestScore<170)teamAKit=awayKit(teamA);teamBKit=best;if(window.bfPaintStands)bfPaintStands(teamAKit,teamBKit)}
 function teamKit(team){return team===TA?teamAKit:teamBKit}
 let players=[],bench=[],ball,particles=[],confetti=[],fireworks=[],bloodDecals=[],items=[],controlled=null,controlled2=null,scoreA=0,scoreB=0,timer=120,gameOver=false,gamePaused=false,winShown=false,last=performance.now(),shake=0,toastT=0,oneTwo=null,shootHold=false,shootCharge=0,passHold=false,passCharge=0,p2ShootHold=false,p2ShootCharge=0,p2PassHold=false,p2PassCharge=0,preMatchT=0,goalHoldT=0,pendingKick=null,goalSlow=0,volleySlow=0,lobSlowT=0,lobSlowDurCache=0,gameTick=0;let switchMem1={t:0,ref:null,i:0,team:null},switchMem2={t:0,ref:null,i:0,team:null}; let netFxL={y:H/2,t:0,power:0},netFxR={y:H/2,t:0,power:0};
 let introT=6.0,introDone=false,attractReady=false,attractKickTimer=0;let passComboA=0,passComboBest=0,passComboTimer=0,passComboSuperReady=0;let replayBuffer=[],goalReplay=null,replayFrameSkip=0;
@@ -1808,12 +1809,14 @@ function renderMenu(){
   if(startBtn) startBtn.style.display='none';
   const page=menuState.page||FLOW_PAGES.MAIN;
   countryList.innerHTML=renderMenuPage(page);
+  const shell=countryList.querySelector('.bfm');if(shell)shell.insertAdjacentHTML('afterbegin',MENU_DECOR);
   if(introDone){showMenuOverlay();resumeAudio();startMenuMusic()}
   else hideMenuOverlay();
   setTimeout(()=>setMenuFocus(menuDefaultFocusIndex()),0);
 }
 // Carrousel de drapeaux : les équipes autour de la sélection, sans défilement natif
 // (le plateau peut être pivoté, un scroll natif partirait dans le mauvais sens).
+const MENU_DECOR='<div class="bfm-bg" aria-hidden="true"><i class="shard s1"></i><i class="shard s2"></i><i class="shard s3"></i><i class="shard s4"></i><i class="shard s5"></i><i class="shard s6"></i><div class="flood l">'+'<i></i>'.repeat(8)+'</div><div class="flood r">'+'<i></i>'.repeat(8)+'</div></div>';
 function menuFlagStrip(cur,attr,skip){
   const n=countries.length,out=[];
   for(let d=-4;d<=4;d++){
@@ -1832,13 +1835,13 @@ function renderMenuPage(page){
   if(page===FLOW_PAGES.MAIN){
     return `<div class="bfm bfm-main">
       <div class="bfm-hero">${window.bfLogoSVG?bfLogoSVG():'<div class="bfm-title">BRUTAL FC</div>'}<div class="bfm-tag">ARCADE FOOTBALL CARNAGE</div></div>
-      <div class="bfm-list">
-        <button data-menu-item data-mode="friendly" class="bfm-btn hero selected"><span class="ico">⚔️</span><span><b>Match amical</b><small>Ton équipe, un adversaire, et ça saigne</small></span></button>
-        <button data-menu-item data-mode="campaign" class="bfm-btn"><span class="ico">🏆</span><span><b>Campagne</b><small>La coupe : un tableau, un boss au bout</small></span></button>
-        <button data-menu-item data-album class="bfm-btn"><span class="ico">📒</span><span><b>Album ${album}</b><small>Ouvre tes paquets, colle tes stickers</small></span></button>
-        <div class="bfm-row">
-          <button data-menu-item data-mode="training" class="bfm-btn"><span class="ico">🎯</span><span><b>Entraîne</b></span></button>
-          <button data-menu-item data-page="options" class="bfm-btn"><span class="ico">⚙️</span><span><b>Options</b></span></button>
+      <div class="bfm-cta">
+        <button data-menu-item data-mode="friendly" class="jag yellow play selected">Jouer<small>Match amical</small></button>
+        <div class="bfm-sub">
+          <button data-menu-item data-mode="campaign" class="jag"><span class="ic">🏆</span>Campagne</button>
+          <button data-menu-item data-album class="jag"><span class="ic">📒</span>Album ${album}</button>
+          <button data-menu-item data-mode="training" class="jag"><span class="ic">🎯</span>Entraîne</button>
+          <button data-menu-item data-page="options" class="jag"><span class="ic">⚙️</span>Options</button>
         </div>
       </div></div>`;
   }
