@@ -49,8 +49,12 @@
 .stk .lg{position:absolute;left:5%;top:5%;z-index:4;padding:1.5cqw 3cqw;background:#ffd23f;color:#120c0a;font-family:'Bowlby One',Impact,sans-serif;font-size:8cqw;line-height:1;
   clip-path:polygon(4% 10%,100% 0,94% 92%,0 100%);transform:rotate(-8deg);filter:drop-shadow(1px 1px 0 #000)}
 .stk .flg{position:absolute;right:5%;top:5%;z-index:4;font-size:10cqw;line-height:1;color:#fff;text-shadow:0 0 2px #000,0 0 2px #000}
-.stk .pl{position:absolute;left:50%;top:17%;width:46%;aspect-ratio:1;transform:translateX(-50%) rotate(-4deg);z-index:2;background:var(--skin);
+.stk .pl{position:absolute;left:50%;top:15%;width:44%;aspect-ratio:1;transform:translateX(-50%) rotate(-4deg);z-index:2;background:var(--skin);
   box-shadow:0 0 0 1.4cqw #0d0b0c,0 0 0 3.4cqw #fff,0 0 0 4.6cqw #0d0b0c,3cqw 4cqw 0 4.6cqw rgba(0,0,0,.35)}
+.stk .pl .ar{position:absolute;top:55%;width:26%;height:2.6cqw;background:#0d0b0c;filter:drop-shadow(0 0 .8cqw #fff) drop-shadow(0 0 .4cqw #fff)}
+.stk .pl .ar.l{right:calc(100% + 4.4cqw);transform-origin:right center;transform:rotate(-24deg)}
+.stk .pl .ar.r{left:calc(100% + 4.4cqw);transform-origin:left center;transform:rotate(24deg)}
+.stk .pl .lgs{position:absolute;left:24%;right:24%;top:calc(100% + 4cqw);height:22%;border-left:2.6cqw solid #0d0b0c;border-right:2.6cqw solid #0d0b0c;filter:drop-shadow(0 0 .8cqw #fff) drop-shadow(0 0 .4cqw #fff)}
 .stk .pl .hr{position:absolute;left:0;top:0;width:100%;height:13%;background:var(--hair)}
 .stk .pl.h-shaved .hr{height:5%}.stk .pl.h-long .hr,.stk .pl.h-curly .hr{height:21%}.stk .pl.h-mohawk .hr{left:38%;width:24%;height:19%}
 .stk .pl .ey{position:absolute;left:46%;top:21%;width:8%;height:24%;background:#1a1414}
@@ -218,7 +222,7 @@
     const code = typeof hudAbbr === 'function' ? hudAbbr(c) : c.name.slice(0, 3).toUpperCase();
     return `<div class="stk ${rarity} ${bloody ? 'bloody' : ''}" style="--kit:${c.color};--stripe:${c.stripe};--skin:${p.skin};--hair:${p.hairColor}">
       <span class="jn">${JERSEY[slot]}</span><span class="lg">BFC</span><span class="flg">${flag(c)}</span>
-      <div class="pl ${hair}"><span class="hr"></span><span class="ey"></span><span class="bd"></span></div>
+      <div class="pl ${hair}"><span class="ar l"></span><span class="ar r"></span><span class="lgs"></span><span class="hr"></span><span class="ey"></span><span class="bd"></span></div>
       ${cnt}<div class="band"><span class="no">${S.stickerNumber(id)}</span><span class="nm">${esc(p.name)}</span><span class="rt">${code} · ${S.ROLES[slot]}${rarity !== 'common' ? ' · ' + S.RARITY[rarity].label : ''}${bloody ? ' · SANGLANT' : ''}</span></div></div>`;
   }
 

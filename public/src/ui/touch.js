@@ -11,16 +11,17 @@
   if(!S || !root) return;
 
   // Plaques penchées : contour en vrai trait SVG (noir + couleur), intérieur très transparent pour voir le jeu.
-  const SHAPES = { shoot:'10,0 100,7 92,100 0,92', pass:'0,9 93,0 100,90 7,100', sprint:'6,0 100,12 94,100 0,88', switch:'10,0 100,10 90,100 0,90' };
+  const SHAPES = { shoot:'10,0 100,7 92,100 0,92', pass:'0,9 93,0 100,90 7,100', sprint:'6,0 100,12 94,100 0,88', switch:'10,0 100,10 90,100 0,90', power:'8,6 100,0 92,94 0,100' };
   const plate = k => `<svg class="pl" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="${SHAPES[k]}" fill="rgba(13,11,12,.28)" stroke="#000" stroke-width="7" vector-effect="non-scaling-stroke"/><polygon points="${SHAPES[k]}" fill="none" stroke="currentColor" stroke-width="3.5" vector-effect="non-scaling-stroke"/></svg>`;
   root.innerHTML = '<div class="tStick" id="tStick"><i></i></div>' +
     '<div class="tBtn shoot" data-a="shoot">' + plate('shoot') + '<span class="ic">⚽</span><span class="lbl">TIR</span></div>' +
     '<div class="tBtn pass" data-a="pass">' + plate('pass') + '<span class="ic">➜</span><span class="lbl">PASSE</span></div>' +
     '<div class="tBtn sprint" data-a="sprint">' + plate('sprint') + '<span class="ic">⚡</span><span class="lbl">SPRINT</span></div>' +
-    '<div class="tBtn switch" data-a="switch">' + plate('switch') + '<span class="ic">⇄</span><span class="lbl">CHANGE</span></div>';
+    '<div class="tBtn switch" data-a="switch">' + plate('switch') + '<span class="ic">⇄</span><span class="lbl">CHANGE</span></div>' +
+    '<div class="tBtn power" data-a="power">' + plate('power') + '<span class="ic">💢</span><span class="lbl">RAGE</span></div>';
   const stickEl = root.querySelector('#tStick'), nub = stickEl.querySelector('i');
   const btns = Array.from(root.querySelectorAll('.tBtn')).map(el => ({ el, a: el.dataset.a, lbl: el.querySelector('.lbl'), ic: el.querySelector('.ic'), ids: new Set() }));
-  const shootBtn = btns.find(b => b.a === 'shoot'), passBtn = btns.find(b => b.a === 'pass');
+  const shootBtn = btns.find(b => b.a === 'shoot'), passBtn = btns.find(b => b.a === 'pass'), sprintBtn = btns.find(b => b.a === 'sprint'), powerBtn = btns.find(b => b.a === 'power');
 
   let stickId = null, origin = null;
 
@@ -103,7 +104,7 @@
   root.addEventListener('contextmenu', e => e.preventDefault());
 
   // Libellés selon l'action possible et jauge de tir, mis à jour seulement quand ils changent.
-  let lastPass = '', lastShoot = '', lastCharge = -1;
+  let lastPass = '', lastShoot = '', lastCharge = -1, lastStam = -1, lastTired = false, lastPow = '';
   function frame(){
     requestAnimationFrame(frame);
     if(!active()) return;
@@ -115,6 +116,22 @@
     const shootLbl = hasBall ? 'TIR' : 'REPRISE';
     if(passLbl !== lastPass){ passBtn.lbl.textContent = passLbl; passBtn.ic.textContent = passLbl === 'TACLE' ? '💥' : '➜'; passBtn.el.style.setProperty('--c', theirs && !hasBall ? 'var(--red)' : 'var(--cyan)'); lastPass = passLbl; }
     if(shootLbl !== lastShoot){ shootBtn.lbl.textContent = shootLbl; lastShoot = shootLbl; }
+    // jauge de rage dans le bouton POUVOIR : icône du pouvoir quand il est prêt / actif
+    if(typeof powerState === 'function'){
+      const ps = powerState(TA), key = ps.active ? 'A' + ps.active : ps.ready ? 'R' + ps.ready : 'G' + Math.floor(ps.rage / 4);
+      if(key !== lastPow){
+        lastPow = key;
+        const id = ps.active || ps.ready;
+        powerBtn.ic.textContent = id ? POWERS[id].icon : '💢';
+        powerBtn.lbl.textContent = ps.active ? 'ACTIF' : ps.ready ? 'GO !' : 'RAGE';
+        powerBtn.el.classList.toggle('ready', !!ps.ready);
+        powerBtn.el.classList.toggle('on', !!ps.active);
+        powerBtn.el.style.setProperty('--rage', id ? 1 : ps.rage / 100);
+      }
+    }
+    // endurance dans le bouton SPRINT
+    const st = me ? Math.round(Math.max(0, Math.min(1, me.energy)) * 50) / 50 : 1;
+    if(st !== lastStam || (me && me.tired > 0) !== lastTired){ lastStam = st; lastTired = !!(me && me.tired > 0); sprintBtn.el.style.setProperty('--stam', st); sprintBtn.el.classList.toggle('tired', lastTired); }
     const ch = typeof shootCharge !== 'undefined' ? shootCharge : 0;
     if(Math.abs(ch - lastCharge) > .005){
       lastCharge = ch;

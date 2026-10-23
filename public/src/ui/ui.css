@@ -405,3 +405,34 @@ body.menuAttract #wrap::before,body.menuAttract #wrap::after{filter:brightness(.
 #pauseBtn{width:calc(var(--u)*9);height:calc(var(--u)*9);font-size:calc(var(--u)*3.4)}
 #hudBtns{top:calc(env(safe-area-inset-top,0px) + var(--u)*1.6);right:calc(env(safe-area-inset-right,0px) + var(--u)*2)}
 #toast{top:calc(env(safe-area-inset-top,0px) + var(--u)*12);font-size:calc(var(--u)*3.4)}
+
+/* endurance dans le bouton SPRINT */
+.tBtn.sprint::before{background:linear-gradient(to top,rgba(255,210,63,.42) calc(var(--stam,1)*100%),transparent 0)}
+.tBtn.sprint.tired{--c:#ff2d2d;animation:blink .5s steps(2) infinite}
+.tBtn.sprint.tired::before{background:linear-gradient(to top,rgba(255,45,45,.35) 100%,transparent 0)}
+
+/* bouton POUVOIR : se remplit avec la rage, pulse quand un pouvoir est prêt */
+.tBtn.power{--c:#ff7a00;--shape:polygon(8% 6%,100% 0,92% 94%,0 100%);width:calc(var(--u)*14);height:calc(var(--u)*12);right:calc(env(safe-area-inset-right,0px) + var(--u)*9);bottom:calc(var(--u)*46);font-size:calc(var(--u)*2.5)}
+.tBtn.power::before{background:linear-gradient(to top,rgba(255,122,0,.5) calc(var(--rage,0)*100%),transparent 0)}
+.tBtn.power.ready{--c:#ffd23f;animation:pulse .6s ease-in-out infinite}
+.tBtn.power.ready::before{background:var(--dots-dark) 0 0/calc(var(--u)*1) calc(var(--u)*1),rgba(255,210,63,.75)}
+.tBtn.power.ready{color:#120c0a;text-shadow:none}
+.tBtn.power.on{--c:#ff2d2d}
+.tBtn.power .ic{font-size:calc(var(--u)*4)}
+/* jauge de rage dans la pastille du HUD */
+.hudMini .rage{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:calc(var(--u)*9);height:calc(var(--u)*3.4);margin-left:calc(var(--u)*.6);padding:0 calc(var(--u)*.8);
+  background:rgba(0,0,0,.6);border-radius:calc(var(--u)*.6);font-family:var(--ui);font-size:calc(var(--u)*2.4);color:#fff;overflow:hidden;isolation:isolate}
+.hudMini .rage i{position:absolute;left:0;top:0;bottom:0;z-index:-1;background:linear-gradient(90deg,#ff2d2d,#ff7a00)}
+.hudMini .rage.ready{color:#120c0a;animation:pulse .6s ease-in-out infinite}
+.hudMini .rage.ready i{background:#ffd23f}
+.hudMini .rage.on i{background:#ff2d2d}
+
+/* petits bras et jambes du cube (traits fins), comme en jeu */
+.bfm-cube .ar{top:56%;width:calc(var(--u)*4);height:calc(var(--u)*.6);background:#0d0b0c}
+.bfm-cube .ar.l{right:100%;transform-origin:right center;transform:rotate(-24deg)}
+.bfm-cube .ar.r{left:100%;transform-origin:left center;transform:rotate(24deg)}
+.bfm-cube .lgs{left:26%;right:26%;top:100%;height:calc(var(--u)*3.6);border-left:calc(var(--u)*.6) solid #0d0b0c;border-right:calc(var(--u)*.6) solid #0d0b0c}
+.bfm-cube::before{bottom:-38%!important}
+/* jauge de rage façon jeu de combat : barre crantée en 4 segments */
+.hudMini .rage{min-width:calc(var(--u)*17)}
+.hudMini .rage::after{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0 calc(25% - 1px),rgba(0,0,0,.7) calc(25% - 1px) 25%)}
