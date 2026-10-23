@@ -1,7 +1,7 @@
 (function (global) {
   'use strict';
 
-  const VERSION = 'v1.4.0';
+  const VERSION = 'v1.5.0';
 
   const PAGES = Object.freeze({
     MAIN: 'main',

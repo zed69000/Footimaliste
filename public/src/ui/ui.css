@@ -436,3 +436,20 @@ body.menuAttract #wrap::before,body.menuAttract #wrap::after{filter:brightness(.
 /* jauge de rage façon jeu de combat : barre crantée en 4 segments */
 .hudMini .rage{min-width:calc(var(--u)*17)}
 .hudMini .rage::after{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0 calc(25% - 1px),rgba(0,0,0,.7) calc(25% - 1px) 25%)}
+
+/* ---------- 3 boutons identiques (même taille, même forme, style simple) ---------- */
+.tBtn.shoot,.tBtn.pass,.tBtn.power{--shape:polygon(6% 0,100% 6%,94% 100%,0 94%);width:calc(var(--u)*18)!important;height:calc(var(--u)*15)!important;font-size:calc(var(--u)*3)!important;animation:none}
+.tBtn .ic,.tBtn.shoot .ic,.tBtn.power .ic{font-size:calc(var(--u)*3.8)!important}
+.tBtn.shoot{--c:#ff2d2d;right:calc(env(safe-area-inset-right,0px) + var(--u)*4)!important;bottom:calc(var(--u)*6)!important}
+.tBtn.pass{--c:#3fd8ff;right:calc(env(safe-area-inset-right,0px) + var(--u)*25)!important;bottom:calc(var(--u)*3)!important}
+.tBtn.pass.tackle{--c:#ffffff}
+.tBtn.power{--c:#ffd23f;right:calc(env(safe-area-inset-right,0px) + var(--u)*6)!important;bottom:calc(var(--u)*24)!important}
+.tBtn.power::before{background:linear-gradient(to top,rgba(255,210,63,.45) calc(var(--rage,0)*100%),transparent 0)}
+.tBtn.power.ready{animation:pulse .6s ease-in-out infinite}
+/* endurance en anneau autour du joystick ; doré en sprint, rouge à bout de souffle */
+.tStick::after{content:'';position:absolute;inset:calc(var(--u)*-1.4);border-radius:50%;pointer-events:none;
+  background:conic-gradient(rgba(255,210,63,.9) calc(var(--stam,1)*1turn),rgba(255,255,255,.12) 0);
+  -webkit-mask:radial-gradient(circle,transparent 64%,#000 66%);mask:radial-gradient(circle,transparent 64%,#000 66%)}
+.tStick.tired::after{background:rgba(255,45,45,.85);animation:blink .4s steps(2) infinite}
+.tStick.sprint i{background:#fff2a0!important;transform-origin:center;box-shadow:0 0 calc(var(--u)*2) rgba(255,210,63,.9)}
+.tStick.sprint{opacity:1}
